@@ -41,7 +41,7 @@ logger = structlog.get_logger()
 # Initialize FastAPI app
 app = FastAPI(
     title="SuperPage Ingestion Service",
-    description="Web3 data ingestion service using Firecrawl MCP SDK",
+    description="StartUp data ingestion service using Firecrawl MCP SDK",
     version="1.0.0"
 )
 
@@ -92,55 +92,17 @@ class ExtractedData(BaseModel):
     status: str
 
 
-# Firecrawl client class
-class FirecrawlClient:
-    """Client for interacting with Firecrawl API"""
-    
-    def __init__(self, api_key: str):
-        self.api_key = api_key
-        self.base_url = "https://api.firecrawl.dev/v0"
-        self.client = httpx.AsyncClient(timeout=30.0)
-    
-    async def extract_data(self, url: str, schema: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Extract structured data from URL using Firecrawl
-        """
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
-        
-        payload = {
-            "url": url,
-            "extractorOptions": {
-                "extractionSchema": schema,
-                "mode": "llm-extraction"
-            }
-        }
-        
-        try:
-            response = await self.client.post(
-                f"{self.base_url}/extract",
-                headers=headers,
-                json=payload
-            )
-            response.raise_for_status()
-            return response.json()
-        
-        except httpx.HTTPStatusError as e:
-            logger.error("Firecrawl API error", status_code=e.response.status_code, response=e.response.text)
-            raise HTTPException(status_code=500, detail=f"Firecrawl API error: {e.response.status_code}")
-        except Exception as e:
-            logger.error("Unexpected error during extraction", error=str(e))
-            raise HTTPException(status_code=500, detail=f"Extraction failed: {str(e)}")
-    
-    async def close(self):
-        """Close the HTTP client"""
-        await self.client.aclose()
+# Import the FirecrawlClient from our separate module
+from firecrawl_client import FirecrawlClient, FirecrawlError
 
 
 # Initialize Firecrawl client
-firecrawl_client = FirecrawlClient(FIRECRAWL_API_KEY) if FIRECRAWL_API_KEY else None
+firecrawl_client = None
+if FIRECRAWL_API_KEY:
+    try:
+        firecrawl_client = FirecrawlClient(FIRECRAWL_API_KEY)
+    except FirecrawlError as e:
+        logger.error("Failed to initialize Firecrawl client", error=str(e))
 
 
 @app.on_event("startup")
@@ -167,9 +129,9 @@ async def shutdown_event():
     """Clean up resources on shutdown"""
     if mongo_client:
         mongo_client.close()
-    
+
     if firecrawl_client:
-        await firecrawl_client.close()
+        firecrawl_client.close()
 
 
 async def process_ingestion(job_id: str, url: str, schema: Dict[str, Any]):
@@ -177,13 +139,17 @@ async def process_ingestion(job_id: str, url: str, schema: Dict[str, Any]):
     Background task to process data ingestion
     """
     logger.info("Starting ingestion job", job_id=job_id, url=url)
-    
+
     try:
         if not firecrawl_client:
-            raise HTTPException(status_code=500, detail="Firecrawl API key not configured")
-        
-        # Extract data using Firecrawl
-        extracted_result = await firecrawl_client.extract_data(url, schema)
+            raise Exception("Firecrawl API key not configured")
+
+        # Extract data using Firecrawl (run in thread pool since it's synchronous)
+        import asyncio
+        loop = asyncio.get_event_loop()
+        extracted_result = await loop.run_in_executor(
+            None, firecrawl_client.extract, url, schema
+        )
         
         # Create validated data object
         extracted_data = ExtractedData(

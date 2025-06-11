@@ -87,4 +87,35 @@ docker run -p 8000:8000 \
 
 ## Testing
 
-The service includes comprehensive error handling and logging. Monitor logs for ingestion job status and any issues with the Firecrawl API or MongoDB connections.
+The service includes comprehensive unit tests and integration tests.
+
+### Running Tests
+
+```bash
+# Run all tests
+python run_tests.py
+
+# Run only unit tests (fast)
+python run_tests.py --unit
+
+# Run with coverage report
+python run_tests.py --coverage
+
+# Run specific test file
+python -m pytest tests/test_ingestion.py -v
+
+# Run specific test method
+python -m pytest tests/test_ingestion.py::TestFirecrawlClient::test_extract_success -v
+```
+
+### Test Coverage
+
+The tests cover:
+- **FirecrawlClient**: All methods with mocked HTTP requests
+- **FastAPI endpoints**: Request/response validation and error handling
+- **Error scenarios**: Authentication, rate limiting, timeouts
+- **Integration flows**: End-to-end ingestion process
+
+### Monitoring
+
+The service includes comprehensive error handling and structured logging. Monitor logs for ingestion job status and any issues with the Firecrawl API or MongoDB connections.
