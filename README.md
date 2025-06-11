@@ -21,8 +21,13 @@ SuperPage/
 │   ├── training_service/      # Federated learning (CLI)
 │   ├── prediction_service/    # Real-time inference (Port 8002)
 │   └── blockchain_service/    # Smart contract integration (Port 8003)
+├── smart-contracts/           # Solidity contracts & HardHat setup
+│   ├── contracts/            # FundraisePrediction.sol
+│   ├── scripts/              # Sepolia deployment scripts
+│   └── test/                 # Comprehensive contract tests
 ├── Dataset/                   # ML training datasets (54K+ samples)
-├── models/                    # Trained model artifacts
+├── docker-compose.yml         # Multi-service orchestration
+├── DOCKER_SETUP.md           # Complete Docker guide
 └── .github/                   # CI/CD workflows
 ```
 
@@ -41,10 +46,12 @@ SuperPage/
 - **Model Persistence**: Automatic saving to `/models/latest/` for inference service
 
 ### ⛓️ Blockchain Integration
-- **Smart Contracts**: SuperPagePrediction.sol with immutable prediction storage
-- **HardHat Integration**: Seamless deployment to localhost/Sepolia/mainnet networks
+- **Smart Contracts**: FundraisePrediction.sol deployed on Sepolia testnet
+- **Contract Address**: `0x45341d82d59b3C4C43101782d97a4dBb97a42dba` (Sepolia)
+- **HardHat Integration**: Complete deployment scripts for Sepolia testnet
 - **Cryptographic Proofs**: Hash-based verification system for prediction authenticity
-- **Gas Optimization**: Efficient contract operations (~85K gas per prediction)
+- **Gas Optimization**: Efficient contract operations (~115K gas per prediction)
+- **Comprehensive Testing**: 19 passing tests with full coverage
 
 ### 🎯 Intelligent Data Processing
 - **Web3 Data Scraping**: Firecrawl MCP SDK integration for live project data
@@ -75,10 +82,12 @@ SuperPage/
 - **Hypothesis** - Property-based testing framework
 
 ### DevOps & Production
-- **Docker** - Multi-stage containerization
-- **Pytest** - Comprehensive testing framework
+- **Docker Compose** - Complete multi-service orchestration
+- **Docker** - Multi-stage containerization with CPU/CUDA variants
+- **Pytest** - Comprehensive testing framework with 80%+ coverage
 - **GitHub Actions** - CI/CD pipeline (ready)
 - **Environment Variables** - Secure configuration management
+- **MongoDB Atlas** - Cloud database integration
 
 ## 📊 ML Features & Dataset
 
@@ -100,15 +109,58 @@ SuperPage/
 - **SuccessLabel**: Binary fundraising success prediction (0/1)
 - **SHAP Explanations**: Top 3 feature importance scores
 
+## 🔗 Smart Contract Integration
+
+### Deployed Contract (Sepolia Testnet)
+- **Contract Address**: `0x45341d82d59b3C4C43101782d97a4dBb97a42dba`
+- **Network**: Sepolia Testnet (Chain ID: 11155111)
+- **Explorer**: [View on Etherscan](https://sepolia.etherscan.io/address/0x45341d82d59b3C4C43101782d97a4dBb97a42dba)
+
+### Contract Features
+- **Immutable Storage**: Predictions stored permanently on-chain
+- **Cryptographic Proofs**: Hash-based verification system
+- **Gas Optimized**: ~115K gas per prediction submission
+- **Event Emission**: Transparent logging of all predictions
+- **Access Control**: Open submission, immutable retrieval
+
+### Environment Configuration
+All services are pre-configured with production credentials:
+- **MongoDB Atlas**: Cloud database integration
+- **Firecrawl API**: Web3 data scraping service
+- **Sepolia Testnet**: Ethereum test network
+- **Infura RPC**: Ethereum node access
+- **Etherscan API**: Contract verification
+
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.9+
-- Node.js 18+ (for blockchain service)
+- Node.js 18+ (for smart contracts)
 - Docker & Docker Compose
 - Git
 
-### Installation
+### Option 1: Docker Compose (Recommended)
+
+1. **Clone and start the complete system**
+   ```bash
+   git clone https://github.com/mysticalseeker24/SuperPage.git
+   cd SuperPage
+
+   # Windows
+   start-superpage.bat development
+
+   # Linux/Mac
+   ./start-superpage.sh development
+   ```
+
+2. **Access services**
+   - **Ingestion API**: http://localhost:8000/docs
+   - **Preprocessing API**: http://localhost:8001/docs
+   - **Prediction API**: http://localhost:8002/docs
+   - **Blockchain API**: http://localhost:8003/docs
+   - **Database UI**: http://localhost:8081 (development)
+
+### Option 2: Individual Services
 
 1. **Clone the repository**
    ```bash
@@ -137,25 +189,27 @@ SuperPage/
    python train_federated.py --rounds 5 --lr 0.001 --batch-size 32
    ```
 
-4. **Deploy smart contract (optional)**
-   ```bash
-   cd backend/blockchain_service
-   npx hardhat node &  # Start local blockchain
-   npx hardhat run scripts/deploy.js --network localhost
-   ```
+### Testing the Complete Pipeline
 
-5. **Test the complete pipeline**
-   ```bash
-   # Make a prediction
-   curl -X POST "http://localhost:8002/predict" \
-     -H "Content-Type: application/json" \
-     -d '{"features": [5.5, 0.75, 0.82, 1500, 0.65, 500000, 0.72]}'
+```bash
+# 1. Ingest Web3 project data
+curl -X POST "http://localhost:8000/ingest" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://github.com/ethereum/ethereum-org-website", "project_id": "ethereum-org"}'
 
-   # Publish to blockchain
-   curl -X POST "http://localhost:8003/publish" \
-     -H "Content-Type: application/json" \
-     -d '{"project_id": "test-project", "score": 0.7234, "proof": "0x1a2b...", "metadata": {}}'
-   ```
+# 2. Process features
+curl -X GET "http://localhost:8001/features/ethereum-org"
+
+# 3. Make prediction with SHAP explanations
+curl -X POST "http://localhost:8002/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"features": [8.5, 0.95, 0.88, 15000, 0.85, 2000000, 0.92]}'
+
+# 4. Publish to Sepolia blockchain
+curl -X POST "http://localhost:8003/publish" \
+  -H "Content-Type: application/json" \
+  -d '{"project_id": "ethereum-org", "score": 0.92, "proof": "0x1234567890abcdef", "metadata": {"confidence": 0.95}}'
+```
 
 ## 📁 Project Structure
 
@@ -182,10 +236,16 @@ SuperPage/
 │   │   └── Dockerfile                # Production container
 │   └── blockchain_service/           # Smart contract integration (Port 8003)
 │       ├── main.py                   # FastAPI with HardHat integration
-│       ├── contracts/                # Solidity smart contracts
+│       ├── contracts/                # Legacy smart contracts
 │       ├── scripts/                  # HardHat deployment scripts
 │       ├── tests/                    # Subprocess mocking tests
 │       └── Dockerfile                # Multi-stage build (Node.js + Python)
+├── smart-contracts/                  # Dedicated smart contracts directory
+│   ├── contracts/                    # FundraisePrediction.sol
+│   ├── scripts/                      # deploySepolia.js and utilities
+│   ├── test/                         # Comprehensive contract tests (19 tests)
+│   ├── hardhat.config.js             # Sepolia testnet configuration
+│   └── package.json                  # HardHat dependencies
 ├── Dataset/                          # ML training datasets (54K+ samples)
 │   ├── dummy_dataset_aligned.csv     # 1K samples (testing)
 │   ├── startup_funding_aligned.csv   # 3K samples (real data)
@@ -219,25 +279,44 @@ cd backend/blockchain_service && pytest -m subprocess
 
 ## 🚀 Deployment
 
-### Docker Development
+### Docker Compose (Recommended)
 ```bash
-# Individual services
+# Development environment
+docker-compose up
+
+# Production environment
+docker-compose -f docker-compose.prod.yml up
+
+# Scale specific services
+docker-compose up --scale prediction-service=3
+
+# View logs
+docker-compose logs -f
+```
+
+### Smart Contract Deployment
+```bash
+# Deploy to Sepolia testnet
+cd smart-contracts
+npm install
+npm run deploy:sepolia
+
+# Verify contract
+npm run verify:sepolia <CONTRACT_ADDRESS>
+
+# Run contract tests
+npm test
+```
+
+### Individual Docker Services
+```bash
+# Build individual services
 cd backend/ingestion_service && docker build -t superpage-ingestion .
 cd backend/prediction_service && docker build -t superpage-prediction .
 cd backend/blockchain_service && docker build -t superpage-blockchain .
 
 # Run with volume mounts
 docker run -p 8002:8002 -v $(pwd)/models:/app/models superpage-prediction
-```
-
-### Docker Production
-```bash
-# Production builds
-docker build --target production -t superpage-prediction-prod backend/prediction_service/
-docker build --target production -t superpage-blockchain-prod backend/blockchain_service/
-
-# Production deployment
-docker run -p 8003:8003 --env-file .env superpage-blockchain-prod
 ```
 
 ## 🤝 Contributing
