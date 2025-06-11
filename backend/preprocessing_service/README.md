@@ -136,6 +136,58 @@ The service uses dependency injection for:
 - **Processing Errors**: Comprehensive logging and error propagation
 - **Validation Errors**: Pydantic model validation with clear error messages
 
+## Testing
+
+The service includes comprehensive unit tests with property-based testing using Hypothesis.
+
+### Running Tests
+
+```bash
+# Run all tests
+python run_tests.py
+
+# Run only unit tests (fast)
+python run_tests.py --unit
+
+# Run with coverage report
+python run_tests.py --coverage
+
+# Run hypothesis property-based tests
+python run_tests.py --hypothesis
+
+# Run fast tests only (exclude slow hypothesis tests)
+python run_tests.py --fast
+
+# Run ML-specific tests
+python run_tests.py --ml
+
+# Run specific test file
+python -m pytest tests/test_preprocessing.py -v
+
+# Run hypothesis tests with custom example count
+python run_tests.py --hypothesis --max-examples 50
+```
+
+### Test Coverage
+
+The tests cover:
+- **Text Processing**: HTML removal, URL cleaning, whitespace normalization
+- **Feature Extraction**: Numeric and text feature processing with edge cases
+- **ML Components**: Tokenizer, scaler, and vectorizer initialization
+- **FastAPI Endpoints**: Request/response validation and error handling
+- **Feature Vector Validation**: Length consistency and data type validation
+- **Property-Based Testing**: Hypothesis-generated edge cases for numeric inputs
+- **Raw Data Mocking**: Comprehensive testing with various data scenarios
+- **Error Scenarios**: Invalid data types, missing fields, extreme values
+
+### Property-Based Testing with Hypothesis
+
+The service includes comprehensive property-based tests using Hypothesis for:
+- **Numeric Edge Cases**: Tests with extreme values, negative numbers, and boundary conditions
+- **String Processing**: Tests with various text formats, empty strings, and special characters
+- **Data Type Validation**: Tests with invalid data types and malformed inputs
+- **Feature Vector Consistency**: Ensures consistent output regardless of input variations
+
 ## Monitoring
 
 The service provides comprehensive monitoring through:
