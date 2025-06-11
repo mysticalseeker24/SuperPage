@@ -1,0 +1,63 @@
+{
+  "name": "superpage-smart-contracts",
+  "version": "1.0.0",
+  "description": "SuperPage smart contracts for fundraising prediction with Sepolia testnet deployment",
+  "main": "hardhat.config.js",
+  "scripts": {
+    "test": "hardhat test",
+    "test:verbose": "hardhat test --verbose",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "compile": "hardhat compile",
+    "clean": "hardhat clean",
+    "deploy:localhost": "hardhat run scripts/deploySepolia.js --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploySepolia.js --network sepolia",
+    "verify:sepolia": "hardhat verify --network sepolia",
+    "node": "hardhat node",
+    "console": "hardhat console",
+    "flatten": "hardhat flatten",
+    "size": "hardhat size-contracts"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "hardhat",
+    "smart-contracts",
+    "web3",
+    "defi",
+    "prediction",
+    "fundraising",
+    "sepolia",
+    "testnet"
+  ],
+  "author": "SuperPage Team",
+  "license": "MIT",
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
+    "dotenv": "^16.5.0",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.19.0"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-solhint": "^3.0.1",
+    "chai": "^4.3.7",
+    "ethereum-waffle": "^4.0.10",
+    "hardhat-gas-reporter": "^1.0.9",
+    "prettier": "^2.8.8",
+    "prettier-plugin-solidity": "^1.1.3",
+    "solidity-coverage": "^0.8.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mysticalseeker24/SuperPage.git",
+    "directory": "smart-contracts"
+  },
+  "bugs": {
+    "url": "https://github.com/mysticalseeker24/SuperPage/issues"
+  },
+  "homepage": "https://github.com/mysticalseeker24/SuperPage#readme"
+}
