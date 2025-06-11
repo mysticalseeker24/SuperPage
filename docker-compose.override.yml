@@ -1,0 +1,73 @@
+# Docker Compose Override for Development
+# This file extends docker-compose.yml with development-specific configurations
+
+version: '3.8'
+
+services:
+  # Development overrides for services
+  ingestion-service:
+    volumes:
+      - ./backend/ingestion_service:/app:ro
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=DEBUG
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  preprocessing-service:
+    volumes:
+      - ./backend/preprocessing_service:/app:ro
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=DEBUG
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+
+  prediction-service:
+    volumes:
+      - ./backend/prediction_service:/app:ro
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=DEBUG
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
+
+  blockchain-service:
+    volumes:
+      - ./backend/blockchain_service:/app:ro
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=debug
+    command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003", "--reload"]
+
+  # Add development tools
+  mongo-express:
+    image: mongo-express:latest
+    container_name: superpage-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: superpage123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:superpage123@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: superpage123
+    networks:
+      - superpage-network
+    depends_on:
+      - mongodb
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: superpage-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - superpage-network
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
+    name: superpage-redis-data
