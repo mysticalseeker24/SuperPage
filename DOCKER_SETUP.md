@@ -51,7 +51,7 @@ start-superpage.bat development
 ### 3. Verify Services
 ```bash
 # Check all services are healthy
-curl http://localhost:8000/health  # Ingestion
+curl http://localhost:8010/health  # Ingestion
 curl http://localhost:8001/health  # Preprocessing
 curl http://localhost:8002/health  # Prediction
 curl http://localhost:8003/health  # Blockchain
@@ -129,7 +129,7 @@ curl http://localhost:8003/health  # Blockchain
 - **Output**: Model artifacts in shared volume
 - **Dependencies**: MongoDB, Dataset files
 
-### **Ingestion Service** (Port 8000)
+### **Ingestion Service** (Port 8010)
 - **Purpose**: Web3 data scraping via Firecrawl
 - **API**: FastAPI with async processing
 - **Storage**: Raw data in MongoDB
@@ -173,7 +173,7 @@ docker-compose logs --tail=50
 ./start-superpage.sh health
 
 # Manual health checks
-curl http://localhost:8000/health
+curl http://localhost:8010/health
 curl http://localhost:8001/health
 curl http://localhost:8002/health
 curl http://localhost:8003/health

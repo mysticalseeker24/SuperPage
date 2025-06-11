@@ -16,7 +16,7 @@ SuperPage is a privacy-first, decentralized fundraising prediction platform that
 ```
 SuperPage/
 ├── backend/                    # Microservices Backend
-│   ├── ingestion_service/     # Web3 data scraping (Port 8000)
+│   ├── ingestion_service/     # Web3 data scraping (Port 8010)
 │   ├── preprocessing_service/ # ML feature extraction (Port 8001)
 │   ├── training_service/      # Federated learning (CLI)
 │   ├── prediction_service/    # Real-time inference (Port 8002)
@@ -154,7 +154,7 @@ All services are pre-configured with production credentials:
    ```
 
 2. **Access services**
-   - **Ingestion API**: http://localhost:8000/docs
+   - **Ingestion API**: http://localhost:8010/docs
    - **Preprocessing API**: http://localhost:8001/docs
    - **Prediction API**: http://localhost:8002/docs
    - **Blockchain API**: http://localhost:8003/docs
@@ -193,7 +193,7 @@ All services are pre-configured with production credentials:
 
 ```bash
 # 1. Ingest Web3 project data
-curl -X POST "http://localhost:8000/ingest" \
+curl -X POST "http://localhost:8010/ingest" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://github.com/ethereum/ethereum-org-website", "project_id": "ethereum-org"}'
 
@@ -216,7 +216,7 @@ curl -X POST "http://localhost:8003/publish" \
 ```
 SuperPage/
 ├── backend/                           # Microservices Backend
-│   ├── ingestion_service/            # Web3 data scraping (Port 8000)
+│   ├── ingestion_service/            # Web3 data scraping (Port 8010)
 │   │   ├── main.py                   # FastAPI application
 │   │   ├── firecrawl_client.py       # Firecrawl MCP SDK integration
 │   │   ├── tests/                    # Comprehensive unit tests

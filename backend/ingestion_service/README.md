@@ -79,7 +79,7 @@ Build and run with Docker:
 docker build -t superpage-ingestion .
 
 # Run container
-docker run -p 8000:8000 \
+docker run -p 8010:8010 \
   -e FIRECRAWL_API_KEY=your_key \
   -e MONGODB_URL=mongodb://host:27017 \
   superpage-ingestion

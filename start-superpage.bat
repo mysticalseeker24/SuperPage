@@ -158,7 +158,7 @@ goto check_health
 echo 🏥 Checking service health...
 
 REM Check each service health
-set services=ingestion-service:8000 preprocessing-service:8001 prediction-service:8002 blockchain-service:8003
+set services=ingestion-service:8010 preprocessing-service:8001 prediction-service:8002 blockchain-service:8003
 
 for %%s in (%services%) do (
     for /f "tokens=1,2 delims=:" %%a in ("%%s") do (
@@ -188,7 +188,7 @@ goto display_urls
 
 :display_urls
 echo 🌐 Service URLs:
-echo ✅ Ingestion Service:     http://localhost:8000/docs
+echo ✅ Ingestion Service:     http://localhost:8010/docs
 echo ✅ Preprocessing Service: http://localhost:8001/docs
 echo ✅ Prediction Service:    http://localhost:8002/docs
 echo ✅ Blockchain Service:    http://localhost:8003/docs
@@ -209,7 +209,7 @@ echo 🧪 Running system tests...
 
 REM Test ingestion service
 echo Testing ingestion service...
-curl -X POST "http://localhost:8000/ingest" -H "Content-Type: application/json" -d "{\"url\": \"https://github.com/ethereum/ethereum-org-website\", \"project_id\": \"test-ethereum-org\"}" >nul 2>&1
+curl -X POST "http://localhost:8010/ingest" -H "Content-Type: application/json" -d "{\"url\": \"https://github.com/ethereum/ethereum-org-website\", \"project_id\": \"test-ethereum-org\"}" >nul 2>&1
 if not errorlevel 1 (
     echo ✅ Ingestion service test passed
 ) else (

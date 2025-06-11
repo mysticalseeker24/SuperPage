@@ -5,8 +5,8 @@ This guide will help you run the entire SuperPage system with all services worki
 ## 🎯 System Overview
 
 SuperPage consists of 5 microservices + smart contracts:
-- **Ingestion Service** (Port 8000) - Web3 data scraping
-- **Preprocessing Service** (Port 8001) - ML feature extraction  
+- **Ingestion Service** (Port 8010) - Web3 data scraping
+- **Preprocessing Service** (Port 8001) - ML feature extraction
 - **Training Service** (CLI) - Federated learning
 - **Prediction Service** (Port 8002) - Real-time inference
 - **Blockchain Service** (Port 8003) - Smart contract integration
@@ -66,7 +66,7 @@ This will create the model files needed by the prediction service:
 
 Open 5 separate terminals and run each service:
 
-#### Terminal 1: Ingestion Service (Port 8000)
+#### Terminal 1: Ingestion Service (Port 8010)
 ```bash
 cd backend/ingestion_service
 python main.py
@@ -102,7 +102,7 @@ tail -f backend/*/logs/*.log
 
 ```bash
 # Test Ingestion Service
-curl -X POST "http://localhost:8000/ingest" \
+curl -X POST "http://localhost:8010/ingest" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://example.com/web3-project", "project_id": "test-project-1"}'
 

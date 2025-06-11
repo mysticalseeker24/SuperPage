@@ -38,7 +38,7 @@ services:
     container_name: superpage-ingestion-prod
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8010:8010"
     environment:
       - FIRECRAWL_API_KEY=fc-62e1fc5b845c40948b28fd133fbef7cf
       - MONGODB_URL=mongodb+srv://sakshammishra2402:0UrFl2PySve53nYe@cluster0.zjhsmyu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
@@ -47,7 +47,7 @@ services:
       - SERVICE_VERSION=1.0.0
       - LOG_LEVEL=INFO
       - HOST=0.0.0.0
-      - PORT=8000
+      - PORT=8010
       - WORKERS=4
     networks:
       - superpage-network
@@ -61,7 +61,7 @@ services:
           memory: 512M
       replicas: 2
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
       interval: 30s
       timeout: 10s
       retries: 3

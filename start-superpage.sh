@@ -180,7 +180,7 @@ check_health() {
 # Function to display service URLs
 display_urls() {
     echo -e "${BLUE}🌐 Service URLs:${NC}"
-    echo -e "${GREEN}Ingestion Service:    http://localhost:8000/docs${NC}"
+    echo -e "${GREEN}Ingestion Service:    http://localhost:8010/docs${NC}"
     echo -e "${GREEN}Preprocessing Service: http://localhost:8001/docs${NC}"
     echo -e "${GREEN}Prediction Service:   http://localhost:8002/docs${NC}"
     echo -e "${GREEN}Blockchain Service:   http://localhost:8003/docs${NC}"
