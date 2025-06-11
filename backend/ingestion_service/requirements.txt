@@ -1,38 +1,27 @@
+# SuperPage Ingestion Service Dependencies
+# Web3 data scraping and ingestion
+
 # Core FastAPI dependencies
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pydantic==2.5.0
-pydantic-settings==2.1.0
+fastapi>=0.104.1,<0.120.0
+uvicorn[standard]>=0.24.0,<0.35.0
+pydantic>=2.5.0,<3.0.0
 
 # HTTP client for API calls
-httpx==0.25.2
-requests==2.31.0
-aiofiles==23.2.1
-
-# SSE (Server-Sent Events) support
-sse-starlette==1.6.5
+requests>=2.31.0,<3.0.0
+httpx>=0.25.2,<1.0.0
 
 # MongoDB driver
-motor==3.3.2
-pymongo==4.6.0
-
-# Firecrawl SDK (assuming it exists, otherwise we'll use httpx)
-# firecrawl-sdk==1.0.0
+motor>=3.3.2,<4.0.0
+pymongo>=4.6.0,<5.0.0
 
 # Environment and configuration
-python-dotenv==1.0.0
+python-dotenv>=1.0.0,<2.0.0
 
 # Logging and monitoring
-structlog==23.2.0
+structlog>=23.2.0,<26.0.0
 
-# Async support
-asyncio-mqtt==0.13.0
-
-# Validation and serialization
-email-validator==2.1.0
-
-# Development and testing
-pytest==7.4.3
-pytest-asyncio==0.21.1
-pytest-cov==4.1.0
-pytest-mock==3.12.0
+# Development and testing (optional)
+pytest>=7.4.0,<8.0.0
+pytest-asyncio>=0.21.0,<1.0.0
+pytest-cov>=4.1.0,<5.0.0
+pytest-mock>=3.12.0,<4.0.0
