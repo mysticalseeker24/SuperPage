@@ -28,6 +28,7 @@ services:
     build:
       context: ./backend/training_service
       dockerfile: Dockerfile
+      target: base
     container_name: superpage-training
     restart: "no"  # Run once to train model
     environment:
