@@ -175,6 +175,31 @@ services:
       timeout: 10s
       retries: 3
 
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: superpage-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - superpage-network
+    depends_on:
+      - ingestion-service
+      - preprocessing-service
+      - prediction-service
+      - blockchain-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # System Monitor (Optional - for monitoring all services)
   monitor:
     image: prom/prometheus:latest
@@ -187,6 +212,7 @@ services:
     networks:
       - superpage-network
     depends_on:
+      - frontend
       - ingestion-service
       - preprocessing-service
       - prediction-service

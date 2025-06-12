@@ -21,6 +21,10 @@ SuperPage/
 │   ├── training_service/      # Federated learning (CLI)
 │   ├── prediction_service/    # Real-time inference (Port 8002)
 │   └── blockchain_service/    # Smart contract integration (Port 8003)
+├── frontend/                  # React Frontend Application
+│   ├── src/                  # React components and hooks
+│   ├── public/               # Static assets
+│   └── package.json          # Frontend dependencies
 ├── smart-contracts/           # Solidity contracts & HardHat setup
 │   ├── contracts/            # FundraisePrediction.sol
 │   ├── scripts/              # Sepolia deployment scripts
@@ -60,6 +64,15 @@ SuperPage/
 - **Structured Logging**: Comprehensive monitoring across all microservices
 
 ## 🛠️ Tech Stack
+
+### Frontend Application
+- **React 18.2.0** - Modern React with hooks and concurrent features
+- **Vite 5.0.8** - Fast build tool and development server
+- **Tailwind CSS 3.3.6** - Utility-first CSS framework with custom design system
+- **Framer Motion 10.16.16** - Smooth animations and transitions
+- **React Query 3.39.3** - Server state management and caching
+- **Ethers.js 6.8.1** - Ethereum blockchain integration
+- **React Hook Form 7.48.2** - Form handling and validation
 
 ### Backend Microservices
 - **FastAPI** - High-performance async Python web framework
@@ -154,6 +167,7 @@ All services are pre-configured with production credentials:
    ```
 
 2. **Access services**
+   - **Frontend UI**: http://localhost:3000 (React application)
    - **Ingestion API**: http://localhost:8010/docs
    - **Preprocessing API**: http://localhost:8001/docs
    - **Prediction API**: http://localhost:8002/docs
@@ -168,9 +182,12 @@ All services are pre-configured with production credentials:
    cd SuperPage
    ```
 
-2. **Start all microservices**
+2. **Start frontend and backend services**
    ```bash
-   # Ingestion Service (Port 8000)
+   # Frontend (Port 3000)
+   cd frontend && npm install && npm run dev &
+
+   # Ingestion Service (Port 8010)
    cd backend/ingestion_service && python main.py &
 
    # Preprocessing Service (Port 8001)
