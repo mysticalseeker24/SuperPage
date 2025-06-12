@@ -52,8 +52,8 @@ module.exports = {
       url: INFURA_PROJECT_ID ? `https://sepolia.infura.io/v3/${INFURA_PROJECT_ID}` : "",
       accounts: [PRIVATE_KEY],
       chainId: 11155111,
-      gas: 6000000,
-      gasPrice: 20000000000,
+      gas: 2000000,
+      gasPrice: 2000000000, // 2 gwei instead of 20 gwei
       timeout: 60000
     },
     

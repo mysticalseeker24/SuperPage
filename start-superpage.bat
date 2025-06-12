@@ -198,7 +198,7 @@ if "%ENVIRONMENT%"=="development" (
     echo ✅ Prometheus Monitor:    http://localhost:9090
 )
 
-echo ✅ Smart Contract:        https://sepolia.etherscan.io/address/0x45341d82d59b3C4C43101782d97a4dBb97a42dba
+echo ✅ Smart Contract:        https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D
 echo.
 goto run_tests
 

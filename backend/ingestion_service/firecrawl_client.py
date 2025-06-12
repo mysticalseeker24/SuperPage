@@ -47,7 +47,7 @@ class FirecrawlClient:
         >>> print(result["data"]["title"])
     """
     
-    def __init__(self, api_key: Optional[str] = None, base_url: str = "https://api.firecrawl.dev/v0"):
+    def __init__(self, api_key: Optional[str] = None, base_url: str = "https://api.firecrawl.dev/v1"):
         """
         Initialize Firecrawl client
         
@@ -132,15 +132,15 @@ class FirecrawlClient:
     def extract(self, url: str, schema: Dict[str, Any]) -> Dict[str, Any]:
         """
         Extract structured data from a URL using the provided schema
-        
+
         Args:
             url: URL to extract data from
             schema: Dictionary defining the structure of data to extract
                    Format: {"field_name": "data_type", ...}
-                   
+
         Returns:
             Dictionary containing extracted data and metadata
-            
+
         Example:
             >>> schema = {
             ...     "title": "string",
@@ -148,21 +148,23 @@ class FirecrawlClient:
             ...     "description": "string"
             ... }
             >>> result = client.extract("https://shop.example.com/product", schema)
-            >>> print(result["data"]["title"])
+            >>> print(result["data"]["json"]["title"])
             "Amazing Product"
-        
+
         Raises:
             FirecrawlError: If extraction fails
         """
         payload = {
             "url": url,
-            "extractorOptions": {
-                "extractionSchema": schema,
-                "mode": "llm-extraction"
-            }
+            "formats": ["json"],
+            "jsonOptions": {
+                "schema": schema
+            },
+            "onlyMainContent": True,
+            "timeout": 30000
         }
-        
-        return self._make_request("POST", "/extract", json=payload)
+
+        return self._make_request("POST", "/scrape", json=payload)
     
     def scrape(self, url: str, format: str = "markdown") -> str:
         """
@@ -185,12 +187,11 @@ class FirecrawlClient:
         """
         payload = {
             "url": url,
-            "pageOptions": {
-                "onlyMainContent": True
-            },
-            "formats": [format]
+            "formats": [format],
+            "onlyMainContent": True,
+            "timeout": 30000
         }
-        
+
         response = self._make_request("POST", "/scrape", json=payload)
         
         # Extract content based on format
@@ -199,7 +200,7 @@ class FirecrawlClient:
         elif format == "html":
             return response.get("data", {}).get("html", "")
         elif format == "text":
-            return response.get("data", {}).get("content", "")
+            return response.get("data", {}).get("markdown", "")  # v1 doesn't have separate text format
         else:
             # Return raw response for unknown formats
             return str(response.get("data", {}))

@@ -8,9 +8,16 @@ using text cleaning, tokenization, and feature scaling.
 import os
 import re
 import json
+import warnings
+from contextlib import asynccontextmanager
 from typing import List, Dict, Any, Optional
 import asyncio
 from functools import lru_cache
+
+# Suppress NumPy warnings for Python 3.13 compatibility
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="numpy")
+warnings.filterwarnings("ignore", message=".*MINGW-W64.*")
+warnings.filterwarnings("ignore", message=".*experimental.*")
 
 import pandas as pd
 import numpy as np
@@ -44,11 +51,46 @@ structlog.configure(
 
 logger = structlog.get_logger()
 
-# Initialize FastAPI app
+# Lifespan context manager for startup/shutdown
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Manage application lifespan - startup and shutdown events"""
+    global mongo_client, database
+
+    # Startup
+    try:
+        mongo_client = AsyncIOMotorClient(MONGODB_URL)
+        database = mongo_client[DATABASE_NAME]
+
+        # Test connection
+        await mongo_client.admin.command('ping')
+        logger.info("Connected to MongoDB successfully")
+
+        # Pre-load ML models
+        get_tokenizer()
+        get_scaler()
+        get_text_vectorizer()
+
+        logger.info("Preprocessing service started successfully")
+
+    except Exception as e:
+        logger.error("Failed to initialize preprocessing service", error=str(e))
+        # Continue without MongoDB for development
+        logger.warning("Continuing without MongoDB connection")
+
+    yield
+
+    # Shutdown
+    if mongo_client:
+        mongo_client.close()
+        logger.info("MongoDB connection closed")
+
+# Initialize FastAPI app with lifespan
 app = FastAPI(
     title="SuperPage Preprocessing Service",
     description="ML feature preprocessing service for fundraising prediction",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Environment variables
@@ -106,7 +148,7 @@ class HealthResponse(BaseModel):
 # Dependency injection
 async def get_database():
     """Dependency to get database connection"""
-    if not database:
+    if database is None:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Database connection not available"
@@ -366,39 +408,7 @@ async def process_project_features(raw_data: Dict[str, Any]) -> ProcessedFeature
         )
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize database connection and ML models on startup"""
-    global mongo_client, database
-    
-    try:
-        # Initialize MongoDB connection
-        mongo_client = AsyncIOMotorClient(MONGODB_URL)
-        database = mongo_client[DATABASE_NAME]
-        
-        # Test connection
-        await mongo_client.admin.command('ping')
-        logger.info("Connected to MongoDB successfully")
-        
-        # Pre-load ML models
-        get_tokenizer()
-        get_scaler()
-        get_text_vectorizer()
-        
-        logger.info("Preprocessing service started successfully")
-        
-    except Exception as e:
-        logger.error("Failed to initialize preprocessing service", error=str(e))
-        # Continue without MongoDB for development
-        logger.warning("Continuing without MongoDB connection")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Clean up resources on shutdown"""
-    if mongo_client:
-        mongo_client.close()
-        logger.info("MongoDB connection closed")
+# Event handlers moved to lifespan context manager above
 
 
 @app.get("/features/{project_id}", response_model=ProcessedFeatures)
@@ -462,7 +472,7 @@ async def get_project_features(
 async def health_check() -> HealthResponse:
     """Health check endpoint"""
     dependencies = {
-        "mongodb": bool(database),
+        "mongodb": database is not None,
         "tokenizer": tokenizer is not None,
         "scaler": scaler is not None,
         "vectorizer": text_vectorizer is not None

@@ -11,8 +11,8 @@ async function main() {
     try {
         console.error("Checking blockchain network connectivity...");
         
-        // Connect to provider
-        const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+        // Connect to provider (use hardhat's configured provider)
+        const provider = ethers.provider;
         
         // Test basic connectivity
         const network = await provider.getNetwork();

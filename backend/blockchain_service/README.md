@@ -58,7 +58,7 @@ Publish a prediction result to the blockchain smart contract.
   },
   "project_id": "defi-protocol-xyz",
   "score": 0.7234,
-  "contract_address": "0xabcdef1234567890abcdef1234567890abcdef12"
+  "contract_address": "0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D"
 }
 ```
 
@@ -74,7 +74,7 @@ Health check endpoint with blockchain connectivity status.
 - Python 3.9+
 - Node.js 18+
 - HardHat development environment
-- Ethereum node (local or remote)
+- Ethereum node (Infura or local)
 
 ### Environment Setup
 
@@ -90,9 +90,9 @@ BLOCKCHAIN_PRIVATE_KEY=0x...your_private_key...
 SUPERPAGE_CONTRACT_ADDRESS=0x...contract_address...
 
 # Optional
-BLOCKCHAIN_NETWORK_URL=http://localhost:8545
-GAS_LIMIT=500000
-GAS_PRICE=20000000000
+BLOCKCHAIN_NETWORK_URL=https://sepolia.infura.io/v3/...your_infura_project_id...
+GAS_LIMIT=2000000
+GAS_PRICE=2000000000
 ```
 
 ### Local Development
@@ -105,7 +105,6 @@ pip install -r requirements.txt
 # Node.js dependencies
 npm install
 ```
-
 2. **Start Local Blockchain**
 ```bash
 npx hardhat node
@@ -113,7 +112,7 @@ npx hardhat node
 
 3. **Deploy Smart Contract**
 ```bash
-npx hardhat run scripts/deploy.js --network localhost
+npx hardhat run scripts/deploy.js --network sepolia (npx hardhat run scripts/publish-prediction.js --network sepolia)
 ```
 
 4. **Run Service**
@@ -136,6 +135,23 @@ docker run -p 8003:8003 --env-file .env superpage-blockchain
 docker build --target production -t superpage-blockchain-prod .
 docker run -p 8003:8003 --env-file .env superpage-blockchain-prod
 ```
+
+## Current Deployment (Sepolia Testnet)
+
+### Live Contract Information
+- **Contract Address**: `0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D`
+- **Network**: Sepolia Testnet (Chain ID: 11155111)
+- **Explorer**: [View on Etherscan](https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D)
+- **Deployer**: `0xf60944AF65a3F35b02cc251fe884767213dFAB8D`
+- **Transaction Hash**: `0x0528026d188b6fbaed14d8b92c85fbd74136a303396e87e3b46d884bf9700fcb`
+- **Gas Used**: 1,043,454 gas
+- **Deployment Cost**: 0.002086908 ETH
+
+### Contract Status
+- ✅ **Deployed**: Successfully deployed to Sepolia testnet
+- ✅ **Verified**: Contract owner and authorization confirmed
+- ✅ **Operational**: Ready for prediction publishing
+- ✅ **Gas Optimized**: Using 2 gwei gas price for cost efficiency
 
 ## Smart Contract
 

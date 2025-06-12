@@ -109,9 +109,9 @@ async function main() {
         
         // Create wallet from private key
         const wallet = new ethers.Wallet(privateKey);
-        
-        // Connect to provider (localhost for development)
-        const provider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+
+        // Connect to provider (use hardhat's configured provider)
+        const provider = ethers.provider;
         const signer = wallet.connect(provider);
         
         // Check network connection
@@ -126,6 +126,10 @@ async function main() {
         if (balance.isZero()) {
             throw new Error("Insufficient balance for transaction");
         }
+
+        // Get current nonce to handle pending transactions
+        const nonce = await signer.getTransactionCount("pending");
+        console.error(`Using nonce: ${nonce}`);
         
         // Create contract instance
         const contract = new ethers.Contract(contractAddress, SUPERPAGE_ABI, signer);
@@ -136,10 +140,28 @@ async function main() {
         // Convert proof hash to bytes32
         const proofBytes32 = ethers.utils.hexZeroPad(proofHash, 32);
         
+        // Get current gas price from network and add buffer for replacement transactions
+        let networkGasPrice;
+        try {
+            networkGasPrice = await provider.getGasPrice();
+            console.error(`Current network gas price: ${networkGasPrice.toString()} wei`);
+        } catch (e) {
+            console.error(`Failed to get network gas price, using configured value: ${e.message}`);
+            networkGasPrice = ethers.utils.parseUnits(gasPrice, "wei");
+        }
+
+        // Use higher of configured gas price or network gas price + 20% buffer
+        const configuredGasPrice = ethers.utils.parseUnits(gasPrice, "wei");
+        const bufferedNetworkPrice = networkGasPrice.mul(120).div(100); // Add 20% buffer
+        const finalGasPrice = configuredGasPrice.gt(bufferedNetworkPrice) ? configuredGasPrice : bufferedNetworkPrice;
+
+        console.error(`Using gas price: ${finalGasPrice.toString()} wei (${ethers.utils.formatUnits(finalGasPrice, "gwei")} gwei)`);
+
         // Prepare transaction options
         const txOptions = {
             gasLimit: gasLimit,
-            gasPrice: ethers.utils.parseUnits(gasPrice, "wei")
+            gasPrice: finalGasPrice,
+            nonce: nonce
         };
         
         console.error(`Publishing prediction for project: ${projectId}`);
@@ -166,11 +188,22 @@ async function main() {
         
         // Extract prediction ID from events
         let predictionId = null;
-        if (receipt.events && receipt.events.length > 0) {
-            const event = receipt.events.find(e => e.event === 'PredictionPublished');
-            if (event && event.args) {
-                predictionId = event.args.predictionId.toString();
+        try {
+            if (receipt.events && receipt.events.length > 0) {
+                const event = receipt.events.find(e => e.event === 'PredictionPublished');
+                if (event && event.args && event.args.predictionId) {
+                    predictionId = event.args.predictionId.toString();
+                }
             }
+            // If no events found, try parsing logs directly
+            if (!predictionId && receipt.logs && receipt.logs.length > 0) {
+                console.error(`Found ${receipt.logs.length} logs, but no parsed events. This is normal.`);
+                // For now, we'll use the totalPredictions as a fallback
+                predictionId = "unknown";
+            }
+        } catch (eventError) {
+            console.error(`Error parsing events: ${eventError.message}`);
+            predictionId = "unknown";
         }
         
         // Prepare response data

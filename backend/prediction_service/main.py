@@ -27,7 +27,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 import numpy as np
 import shap
 import torch
@@ -77,7 +77,8 @@ class PredictionRequest(BaseModel):
         max_items=7
     )
     
-    @validator('features')
+    @field_validator('features')
+    @classmethod
     def validate_features(cls, v):
         """Validate feature values are finite numbers"""
         for i, feature in enumerate(v):

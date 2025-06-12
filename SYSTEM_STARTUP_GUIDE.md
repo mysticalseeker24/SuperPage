@@ -26,13 +26,13 @@ All environment variables have been configured with your credentials:
 ### ✅ Ethereum/Sepolia
 - **Private Key**: `a8a6f100ed77edf366914903d669367174436ad272085a414f0a11033d04936e`
 - **Infura Project ID**: `ea1e0f21469f412995bdaaa76ac1c266`
-- **Contract Address**: `0x45341d82d59b3C4C43101782d97a4dBb97a42dba`
+- **Contract Address**: `0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D`
 - **Etherscan API**: `PEK4R6W3IDZGATUF3JDU7KTGBCGWM6UJRA`
 
 ### ✅ Smart Contract Deployed
 - **Network**: Sepolia Testnet
-- **Address**: `0x45341d82d59b3C4C43101782d97a4dBb97a42dba`
-- **Explorer**: https://sepolia.etherscan.io/address/0x45341d82d59b3C4C43101782d97a4dBb97a42dba
+- **Address**: `0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D`
+- **Explorer**: https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D
 
 ## 🚀 System Startup Instructions
 
@@ -124,9 +124,21 @@ curl -X POST "http://localhost:8003/publish" \
 
 ```bash
 # 1. Ingest Web3 project data
-curl -X POST "http://localhost:8000/ingest" \
+curl -X POST "http://localhost:8010/ingest" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://github.com/ethereum/ethereum-org-website", "project_id": "ethereum-org"}'
+  -d '{
+    "url": "https://github.com/ethereum/ethereum-org-website",
+    "schema": {
+      "project_name": "string",
+      "description": "string",
+      "funding_amount": "string",
+      "team_size": "string",
+      "website": "string",
+      "category": "string",
+      "stage": "string",
+      "location": "string"
+    }
+  }'
 
 # 2. Process features
 curl -X GET "http://localhost:8001/features/ethereum-org"
@@ -146,7 +158,7 @@ curl -X POST "http://localhost:8003/publish" \
 
 ```bash
 # Check all services are running
-curl http://localhost:8000/health  # Ingestion
+curl http://localhost:8010/health  # Ingestion
 curl http://localhost:8001/health  # Preprocessing  
 curl http://localhost:8002/health  # Prediction
 curl http://localhost:8003/health  # Blockchain
@@ -155,13 +167,13 @@ curl http://localhost:8003/health  # Blockchain
 ## 🔍 Monitoring and Logs
 
 ### Service URLs:
-- **Ingestion Service**: http://localhost:8000/docs
+- **Ingestion Service**: http://localhost:8010/docs
 - **Preprocessing Service**: http://localhost:8001/docs
 - **Prediction Service**: http://localhost:8002/docs
 - **Blockchain Service**: http://localhost:8003/docs
 
 ### Smart Contract:
-- **Sepolia Explorer**: https://sepolia.etherscan.io/address/0x45341d82d59b3C4C43101782d97a4dBb97a42dba
+- **Sepolia Explorer**: https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D
 
 ## 🐛 Troubleshooting
 
@@ -184,7 +196,7 @@ curl http://localhost:8003/health  # Blockchain
 4. **Port Already in Use**
    ```bash
    # Find and kill process using port
-   netstat -ano | findstr :8000
+   netstat -ano | findstr :8010
    taskkill /PID <PID> /F
    ```
 

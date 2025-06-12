@@ -47,10 +47,10 @@ SuperPage/
 
 ### ⛓️ Blockchain Integration
 - **Smart Contracts**: FundraisePrediction.sol deployed on Sepolia testnet
-- **Contract Address**: `0x45341d82d59b3C4C43101782d97a4dBb97a42dba` (Sepolia)
+- **Contract Address**: `0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D` (Sepolia)
 - **HardHat Integration**: Complete deployment scripts for Sepolia testnet
 - **Cryptographic Proofs**: Hash-based verification system for prediction authenticity
-- **Gas Optimization**: Efficient contract operations (~115K gas per prediction)
+- **Gas Optimization**: Efficient contract operations (~1.04M gas deployment, 2 gwei gas price)
 - **Comprehensive Testing**: 19 passing tests with full coverage
 
 ### 🎯 Intelligent Data Processing
@@ -112,14 +112,14 @@ SuperPage/
 ## 🔗 Smart Contract Integration
 
 ### Deployed Contract (Sepolia Testnet)
-- **Contract Address**: `0x45341d82d59b3C4C43101782d97a4dBb97a42dba`
+- **Contract Address**: `0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D`
 - **Network**: Sepolia Testnet (Chain ID: 11155111)
-- **Explorer**: [View on Etherscan](https://sepolia.etherscan.io/address/0x45341d82d59b3C4C43101782d97a4dBb97a42dba)
+- **Explorer**: [View on Etherscan](https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D)
 
 ### Contract Features
 - **Immutable Storage**: Predictions stored permanently on-chain
 - **Cryptographic Proofs**: Hash-based verification system
-- **Gas Optimized**: ~115K gas per prediction submission
+- **Gas Optimized**: 1.04M gas deployment, 2 gwei optimized pricing
 - **Event Emission**: Transparent logging of all predictions
 - **Access Control**: Open submission, immutable retrieval
 

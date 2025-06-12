@@ -63,7 +63,7 @@ curl http://localhost:8003/health  # Blockchain
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Ingestion     │───▶│  Preprocessing  │───▶│   Prediction    │
 │   Service       │    │    Service      │    │    Service      │
-│   Port 8000     │    │   Port 8001     │    │   Port 8002     │
+│   Port 8010     │    │   Port 8001     │    │   Port 8002     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          ▼                       ▼                       ▼
@@ -193,7 +193,7 @@ docker exec -it superpage-mongodb mongosh
 ### Complete Pipeline Test
 ```bash
 # 1. Ingest data
-curl -X POST "http://localhost:8000/ingest" \
+curl -X POST "http://localhost:8010/ingest" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://github.com/ethereum/ethereum-org-website", "project_id": "ethereum-org"}'
 
@@ -227,7 +227,7 @@ ab -n 100 -c 10 -T 'application/json' -p test-payload.json http://localhost:8002
 **Port Already in Use**
 ```bash
 # Find process using port
-netstat -tulpn | grep :8000
+netstat -tulpn | grep :8010
 # Kill process
 sudo kill -9 <PID>
 ```
