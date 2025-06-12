@@ -195,7 +195,19 @@ All services are pre-configured with production credentials:
 # 1. Ingest Web3 project data
 curl -X POST "http://localhost:8010/ingest" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://github.com/ethereum/ethereum-org-website", "project_id": "ethereum-org"}'
+  -d '{
+    "url": "https://github.com/ethereum/ethereum-org-website",
+    "schema": {
+      "project_name": "string",
+      "description": "string",
+      "funding_amount": "string",
+      "team_size": "string",
+      "website": "string",
+      "category": "string",
+      "stage": "string",
+      "location": "string"
+    }
+  }'
 
 # 2. Process features
 curl -X GET "http://localhost:8001/features/ethereum-org"
