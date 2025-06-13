@@ -104,7 +104,7 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
       variants={cardVariants}
       initial="hidden"
       animate="visible"
-      className="max-w-4xl mx-auto"
+      className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
     >
       {/* Header */}
       <motion.div variants={itemVariants} className="flex items-center justify-between mb-8">
@@ -125,36 +125,110 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
       </motion.div>
 
       {/* Main Prediction Card */}
-      <motion.div variants={itemVariants} className="card p-8 mb-6">
+      <motion.div
+        variants={itemVariants}
+        className="card p-6 sm:p-8 mb-6 w-full sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto"
+      >
         <div className="text-center mb-8">
+          {/* Circular Gauge */}
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-            className={`w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center ${
-              isPositive 
-                ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
-                : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
+            className="relative w-48 h-48 mx-auto mb-6"
+          >
+            <svg
+              className="w-full h-full transform -rotate-90"
+              viewBox="0 0 100 100"
+            >
+              {/* Background circle */}
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="8"
+                className="text-gray-200 dark:text-dark-700"
+              />
+
+              {/* Progress circle */}
+              <motion.circle
+                cx="50"
+                cy="50"
+                r="40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="8"
+                strokeLinecap="round"
+                className={isPositive ? 'text-green-500' : 'text-red-500'}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: successProbability / 100 }}
+                transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
+                style={{
+                  pathLength: 0,
+                  strokeDasharray: "251.2 251.2", // 2 * π * 40
+                }}
+              />
+            </svg>
+
+            {/* Center content */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.8, type: "spring", stiffness: 300 }}
+                className={`mb-2 ${isPositive ? 'text-green-500' : 'text-red-500'}`}
+              >
+                {isPositive ? <TrendingUp size={32} /> : <TrendingDown size={32} />}
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1, duration: 0.5 }}
+                className="text-center"
+              >
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {successProbability}%
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Success Rate
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.5 }}
+            className="text-2xl font-bold text-gray-900 dark:text-white mb-2"
+          >
+            Fundraising Prediction
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4, duration: 0.5 }}
+            className={`text-lg font-medium ${
+              isPositive
+                ? 'text-green-600 dark:text-green-400'
+                : 'text-red-600 dark:text-red-400'
             }`}
           >
-            {isPositive ? <TrendingUp size={40} /> : <TrendingDown size={40} />}
-          </motion.div>
-          
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {successProbability}% Success Probability
-          </h2>
-          
-          <p className={`text-lg font-medium ${
-            isPositive 
-              ? 'text-green-600 dark:text-green-400' 
-              : 'text-red-600 dark:text-red-400'
-          }`}>
             {isPositive ? 'High Funding Potential' : 'Needs Improvement'}
-          </p>
-          
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.5 }}
+            className="text-gray-600 dark:text-gray-400 mt-2"
+          >
             Based on federated learning analysis of 54K+ fundraising data points
-          </p>
+          </motion.p>
         </div>
 
         {/* Progress Bar */}
@@ -185,32 +259,67 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
               <span>Top Contributing Factors</span>
             </h3>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               {topFeatures.map((feature, index) => (
                 <motion.div
                   key={feature.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 + index * 0.1 }}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-800 rounded-lg"
+                  initial={{ opacity: 0, x: -30, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  transition={{
+                    delay: 1.8 + index * 0.15,
+                    duration: 0.5,
+                    type: "spring",
+                    stiffness: 100
+                  }}
+                  className="group hover:scale-105 transition-transform duration-200"
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-3 h-3 rounded-full ${
-                      feature.positive ? 'bg-green-500' : 'bg-red-500'
-                    }`} />
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {feature.name}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <span className={`text-sm font-medium ${
-                      feature.positive 
-                        ? 'text-green-600 dark:text-green-400' 
-                        : 'text-red-600 dark:text-red-400'
-                    }`}>
-                      {feature.positive ? '+' : '-'}{(feature.importance * 100).toFixed(1)}%
-                    </span>
+                  <div className="flex items-center p-4 bg-gray-50 dark:bg-dark-800 rounded-xl border border-gray-100 dark:border-dark-700 hover:border-primary-200 dark:hover:border-primary-800 transition-colors">
+                    <div className="flex items-center space-x-4 flex-1">
+                      {/* Bullet point with animation */}
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 2 + index * 0.15, type: "spring", stiffness: 200 }}
+                        className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                          feature.positive
+                            ? 'bg-green-500 shadow-lg shadow-green-500/30'
+                            : 'bg-red-500 shadow-lg shadow-red-500/30'
+                        }`}
+                      >
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      </motion.div>
+
+                      <div className="flex-1">
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {feature.name}
+                        </span>
+                        <div className="mt-1 w-full bg-gray-200 dark:bg-dark-600 rounded-full h-2">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${feature.importance * 100}%` }}
+                            transition={{ delay: 2.2 + index * 0.15, duration: 0.8 }}
+                            className={`h-2 rounded-full ${
+                              feature.positive
+                                ? 'bg-gradient-to-r from-green-400 to-green-600'
+                                : 'bg-gradient-to-r from-red-400 to-red-600'
+                            }`}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <span className={`text-lg font-bold ${
+                          feature.positive
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}>
+                          {feature.positive ? '+' : '-'}{(feature.importance * 100).toFixed(1)}%
+                        </span>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          Impact
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -272,38 +381,84 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
           </div>
           
           {!publishResult ? (
-            <button
+            <motion.button
               onClick={handlePublishToBlockchain}
               disabled={isPublishing || publishMutation.isLoading}
-              className="btn-primary flex items-center space-x-2"
+              className="relative overflow-hidden px-6 py-3 rounded-full font-medium text-white transition-all duration-300 transform hover:scale-105 disabled:scale-100"
+              style={{
+                background: isPublishing || publishMutation.isLoading
+                  ? '#94a3b8'
+                  : 'linear-gradient(135deg, #CA4E79 0%, #DD6A8D 100%)'
+              }}
+              whileHover={{
+                background: 'linear-gradient(135deg, #DD6A8D 0%, #E879A6 100%)',
+                boxShadow: '0 10px 25px rgba(202, 78, 121, 0.3)'
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              {isPublishing || publishMutation.isLoading ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  <span>Publishing...</span>
-                </>
-              ) : (
-                <>
-                  <Share2 size={16} />
-                  <span>Publish</span>
-                </>
+              <motion.div
+                className="flex items-center space-x-2"
+                animate={isPublishing || publishMutation.isLoading ? { x: [0, -100, 100, 0] } : {}}
+                transition={{ duration: 1, repeat: isPublishing || publishMutation.isLoading ? Infinity : 0 }}
+              >
+                {isPublishing || publishMutation.isLoading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    <span>Publishing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 size={16} />
+                    <span>Publish On-chain</span>
+                  </>
+                )}
+              </motion.div>
+
+              {/* Shimmer effect */}
+              {!isPublishing && !publishMutation.isLoading && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  initial={{ x: '-100%' }}
+                  animate={{ x: '100%' }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                />
               )}
-            </button>
+            </motion.button>
           ) : publishResult.success ? (
-            <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
-              <CheckCircle size={20} />
-              <span className="font-medium">Published!</span>
-              {publishResult.data?.transaction_hash && (
-                <a
-                  href={`https://sepolia.etherscan.io/tx/${publishResult.data.transaction_hash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-ghost p-1"
-                >
-                  <ExternalLink size={16} />
-                </a>
-              )}
-            </div>
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="flex items-center space-x-3"
+            >
+              <motion.div
+                initial={{ rotate: 0 }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex items-center justify-center w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full"
+              >
+                <CheckCircle size={20} className="text-green-600 dark:text-green-400" />
+              </motion.div>
+
+              <div>
+                <span className="font-medium text-green-600 dark:text-green-400">
+                  Published Successfully!
+                </span>
+                {publishResult.data?.transaction_hash && (
+                  <div className="mt-1">
+                    <a
+                      href={`https://sepolia.etherscan.io/tx/${publishResult.data.transaction_hash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                    >
+                      <span>View on Etherscan</span>
+                      <ExternalLink size={14} />
+                    </a>
+                  </div>
+                )}
+              </div>
+            </motion.div>
           ) : (
             <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
               <AlertCircle size={20} />
