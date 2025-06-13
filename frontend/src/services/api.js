@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { apiClients } from '../api/clients'
 
 // Create axios instances for each service
 const createApiInstance = (baseURL, serviceName) => {
@@ -95,10 +96,9 @@ export const checkAllServicesHealth = async () => {
 
 // Prediction API
 export const predictionService = {
-  // Make prediction
+  // Make prediction using centralized client
   predict: async (features) => {
-    const response = await predictionApi.post('/predict', { features })
-    return response.data
+    return await apiClients.predict(features)
   },
 
   // Get model info
@@ -116,10 +116,9 @@ export const predictionService = {
 
 // Blockchain API
 export const blockchainService = {
-  // Publish prediction to blockchain
-  publish: async (data) => {
-    const response = await blockchainApi.post('/publish', data)
-    return response.data
+  // Publish prediction to blockchain using centralized client
+  publish: async (projectId, score, proof) => {
+    return await apiClients.publish(projectId, score, proof)
   },
 
   // Get contract info
@@ -241,9 +240,21 @@ export default {
   health: {
     checkService: checkServiceHealth,
     checkAll: checkAllServicesHealth,
+    getServiceStatus: apiClients.getServiceStatus,
   },
   utils: {
     convertPitchToFeatures,
     FEATURE_NAMES,
+  },
+  // Centralized API client functions
+  client: {
+    connectWallet: apiClients.connectWallet,
+    predict: apiClients.predict,
+    publish: apiClients.publish,
+    getTopPredictions: apiClients.getTopPredictions,
+    setWalletAddress: apiClients.setWalletAddress,
+    getWalletAddress: apiClients.getWalletAddress,
+    disconnectWallet: apiClients.disconnectWallet,
+    isWalletConnected: apiClients.isWalletConnected,
   },
 }

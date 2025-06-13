@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { apiClients } from '../api/clients'
 import { ethers } from 'ethers'
 
 export const useWallet = () => {
@@ -53,14 +54,8 @@ export const useWallet = () => {
     setError(null)
 
     try {
-      // Request account access
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      })
-
-      if (accounts.length === 0) {
-        throw new Error('No accounts found. Please connect your MetaMask wallet.')
-      }
+      // Use API client to connect wallet
+      const address = await apiClients.connectWallet()
 
       // Create provider and signer
       const web3Provider = new ethers.BrowserProvider(window.ethereum)
@@ -69,14 +64,14 @@ export const useWallet = () => {
 
       setProvider(web3Provider)
       setSigner(web3Signer)
-      setAccount(accounts[0])
+      setAccount(address)
       setChainId(network.chainId.toString())
 
-      // Store connection state
-      localStorage.setItem('walletConnected', 'true')
+      // Set wallet address in API client
+      apiClients.setWalletAddress(address)
 
       console.log('Wallet connected:', {
-        account: accounts[0],
+        account: address,
         chainId: network.chainId.toString(),
         network: network.name,
       })
@@ -97,7 +92,7 @@ export const useWallet = () => {
     setSigner(null)
     setChainId(null)
     setError(null)
-    localStorage.removeItem('walletConnected')
+    apiClients.disconnectWallet()
   }, [])
 
   // Switch to Sepolia network
