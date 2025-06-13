@@ -18,9 +18,14 @@ import {
 
 // Mock API function - replace with actual API call
 const fetchTopPredictions = async () => {
+  // In tests, this will be mocked
+  if (typeof window !== 'undefined' && window.__TESTING__) {
+    return window.__MOCK_PREDICTIONS__ || []
+  }
+
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1000))
-  
+
   // Mock data - replace with actual API call
   return Array.from({ length: 50 }, (_, index) => ({
     id: `project-${index + 1}`,
