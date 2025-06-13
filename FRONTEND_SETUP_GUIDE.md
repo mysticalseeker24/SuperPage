@@ -4,7 +4,7 @@
 
 ## 🎯 Overview
 
-The SuperPage frontend is a modern React application that provides an intuitive interface for Web3 fundraising prediction. It connects to all backend microservices and integrates with MetaMask for blockchain functionality.
+The SuperPage frontend is a modern React application that provides an intuitive interface for Web3 fundraising prediction. Built with CSS-in-JS and Framer Motion (no Tailwind), it features complete page routing, responsive design, and seamless integration with all backend microservices and MetaMask for blockchain functionality.
 
 ## 🚀 Quick Start
 
@@ -121,19 +121,33 @@ npm test
 frontend/
 ├── src/
 │   ├── components/          # React components
+│   │   ├── Layout.jsx           # Main layout with navigation
+│   │   ├── Router.jsx           # React Router configuration
+│   │   ├── HomePage.jsx         # Landing page with hero section
+│   │   ├── PredictPage.jsx      # Prediction interface page
+│   │   ├── ExplorePage.jsx      # Community predictions page
+│   │   ├── AboutPage.jsx        # About page with markdown
+│   │   ├── NotFoundPage.jsx     # 404 error page
 │   │   ├── WalletConnect.jsx    # Wallet connection UI
 │   │   ├── PitchForm.jsx        # Prediction form
 │   │   ├── PredictionCard.jsx   # Results display
+│   │   ├── StartupsList.jsx     # Community predictions list
 │   │   └── ServiceStatus.jsx    # Health monitoring
 │   ├── hooks/              # Custom React hooks
 │   │   └── useWallet.js        # Wallet connection logic
 │   ├── services/           # API integration
 │   │   └── api.js             # Backend service calls
-│   ├── App.jsx            # Root component
-│   └── main.jsx           # React entry point
+│   ├── api/                # Centralized API client
+│   │   └── clients.js         # Axios client with interceptors
+│   ├── App.jsx            # Root component with React Query
+│   ├── main.jsx           # React entry point
+│   └── index.css          # Global styles (no Tailwind)
 ├── public/                # Static assets
-├── package.json          # Dependencies
-└── vite.config.js       # Vite configuration
+│   └── about.md          # About page markdown content
+├── package.json          # Dependencies (no Tailwind)
+├── vite.config.js       # Vite configuration
+├── .eslintrc.cjs        # ESLint configuration
+└── README.md            # Frontend documentation
 ```
 
 ## 🐳 Docker Deployment

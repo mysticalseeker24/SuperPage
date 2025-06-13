@@ -22,9 +22,12 @@ SuperPage/
 │   ├── prediction_service/    # Real-time inference (Port 8002)
 │   └── blockchain_service/    # Smart contract integration (Port 8003)
 ├── frontend/                  # React Frontend Application
-│   ├── src/                  # React components and hooks
-│   ├── public/               # Static assets
-│   └── package.json          # Frontend dependencies
+│   ├── src/                  # React components, hooks, and API clients
+│   │   ├── components/       # Layout, pages, and UI components
+│   │   ├── api/              # Centralized API client with interceptors
+│   │   └── hooks/            # Custom React hooks
+│   ├── public/               # Static assets and markdown content
+│   └── package.json          # Frontend dependencies (no Tailwind)
 ├── smart-contracts/           # Solidity contracts & HardHat setup
 │   ├── contracts/            # FundraisePrediction.sol
 │   ├── scripts/              # Sepolia deployment scripts
@@ -63,14 +66,23 @@ SuperPage/
 - **MongoDB Storage**: Scalable document storage for ingested project data
 - **Structured Logging**: Comprehensive monitoring across all microservices
 
+### 🌐 Modern Frontend Experience
+- **React Router DOM**: Complete page routing with /predict, /explore, /about, /404
+- **AboutPage**: Markdown-rendered documentation with scroll animations
+- **HomePage**: Hero section, features grid, and interactive stats dashboard
+- **ExplorePage**: Community predictions with filtering, search, and modal details
+- **Centralized API Client**: Unified axios client with error handling and toast notifications
+- **CSS-in-JS**: No framework dependencies, pure inline styles with Framer Motion
+- **Responsive Design**: Mobile-first approach with sticky navigation and dark mode
+
 ## 🛠️ Tech Stack
 
 ### Frontend Application
 - **React 18.2.0** - Modern React with hooks and concurrent features
 - **Vite 5.0.8** - Fast build tool and development server
-- **Tailwind CSS 3.3.6** - Utility-first CSS framework with custom design system
-- **Framer Motion 10.16.16** - Smooth animations and transitions
-- **React Query 3.39.3** - Server state management and caching
+- **CSS-in-JS with Framer Motion** - Inline styles with smooth animations
+- **React Router DOM 6.20.1** - Client-side routing and navigation
+- **React Query 5.17.0** - Server state management and caching
 - **Ethers.js 6.8.1** - Ethereum blockchain integration
 - **React Hook Form 7.48.2** - Form handling and validation
 

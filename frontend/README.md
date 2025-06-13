@@ -4,12 +4,21 @@
 
 [![React](https://img.shields.io/badge/React-18.2.0-61DAFB.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.0.8-646CFF.svg)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.6-38B2AC.svg)](https://tailwindcss.com/)
+[![React Router](https://img.shields.io/badge/React_Router-6.20.1-CA4245.svg)](https://reactrouter.com/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-10.16.16-0055FF.svg)](https://www.framer.com/motion/)
 
 ## 🌟 Overview
 
-The SuperPage frontend is a modern, responsive React application that provides an intuitive interface for Web3 fundraising prediction. Built with OnlyFounders-inspired design principles, it features clean aesthetics, generous whitespace, and smooth animations.
+The SuperPage frontend is a modern, responsive React application that provides an intuitive interface for Web3 fundraising prediction. Built with OnlyFounders-inspired design principles using CSS-in-JS and Framer Motion, it features clean aesthetics, generous whitespace, and smooth animations without any CSS framework dependencies.
+
+### ✨ **New Features Added**
+- **🧭 React Router DOM**: Complete page routing with /predict, /explore, /about, /404
+- **📄 AboutPage**: Markdown-rendered documentation with scroll animations
+- **🏠 HomePage**: Hero section, features grid, and stats dashboard
+- **🔍 ExplorePage**: Community predictions with filtering and search
+- **🌐 Centralized API Client**: Unified axios client with error handling
+- **🎨 CSS-in-JS**: No Tailwind dependency, pure inline styles
+- **📱 Responsive Layout**: Mobile-first design with sticky navigation
 
 ## 🎨 Design System
 
@@ -70,10 +79,10 @@ The SuperPage frontend is a modern, responsive React application that provides a
 - **React Hook Form 7.48.2** - Form handling and validation
 
 ### Styling & Animation
-- **Tailwind CSS 3.3.6** - Utility-first CSS framework
-- **Framer Motion 10.16.16** - Animation library
+- **CSS-in-JS** - Inline styles with JavaScript objects
+- **Framer Motion 10.16.16** - Animation library and smooth transitions
 - **Lucide React 0.294.0** - Beautiful icons
-- **Custom CSS** - Glass morphism and gradients
+- **Custom CSS** - Clean animations and responsive design
 
 ### Web3 Integration
 - **Ethers.js 6.8.1** - Ethereum library
@@ -91,22 +100,33 @@ The SuperPage frontend is a modern, responsive React application that provides a
 ```
 frontend/
 ├── public/                 # Static assets
+│   └── about.md           # About page markdown content
 ├── src/
 │   ├── components/        # React components
-│   │   ├── WalletConnect.jsx    # Wallet connection UI
-│   │   ├── PitchForm.jsx        # Prediction form
-│   │   ├── PredictionCard.jsx   # Results display
-│   │   └── ServiceStatus.jsx    # Health monitoring
+│   │   ├── Layout.jsx         # Main layout with navigation
+│   │   ├── Router.jsx         # React Router configuration
+│   │   ├── HomePage.jsx       # Landing page with hero section
+│   │   ├── PredictPage.jsx    # Prediction interface page
+│   │   ├── ExplorePage.jsx    # Community predictions page
+│   │   ├── AboutPage.jsx      # About page with markdown
+│   │   ├── NotFoundPage.jsx   # 404 error page
+│   │   ├── WalletConnect.jsx  # Wallet connection UI
+│   │   ├── PitchForm.jsx      # Prediction form
+│   │   ├── PredictionCard.jsx # Results display
+│   │   ├── StartupsList.jsx   # Community predictions list
+│   │   └── ServiceStatus.jsx  # Health monitoring
 │   ├── hooks/            # Custom React hooks
-│   │   └── useWallet.js        # Wallet connection logic
+│   │   └── useWallet.js       # Wallet connection logic
 │   ├── services/         # API integration
-│   │   └── api.js             # Backend service calls
-│   ├── App.jsx          # Root component
+│   │   └── api.js            # Backend service calls
+│   ├── api/              # Centralized API client
+│   │   └── clients.js        # Axios client with interceptors
+│   ├── App.jsx          # Root component with React Query
 │   ├── main.jsx         # React entry point
-│   └── index.css        # Global styles
+│   └── index.css        # Global styles (no Tailwind)
 ├── package.json         # Dependencies
 ├── vite.config.js      # Vite configuration
-├── tailwind.config.js  # Tailwind configuration
+├── .eslintrc.cjs      # ESLint configuration
 └── README.md           # This file
 ```
 
@@ -159,19 +179,15 @@ VITE_SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
 VITE_CONTRACT_ADDRESS=0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D
 ```
 
-### Tailwind Customization
-Modify `tailwind.config.js` to customize the design system:
+### Styling Customization
+Modify the styles object in components to customize the design system:
 
 ```javascript
-// Add custom colors, fonts, or animations
-theme: {
-  extend: {
-    colors: {
-      primary: {
-        500: '#CA4E79', // Your brand color
-      },
-    },
-  },
+// Example: Update colors in any component
+const styles = {
+  primary: '#CA4E79', // OnlyFounders pink
+  background: '#0F0E13', // Dark background
+  surface: '#1D1C24', // Card background
 }
 ```
 
