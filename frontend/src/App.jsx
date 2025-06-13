@@ -8,6 +8,136 @@ import PredictionCard from './components/PredictionCard'
 import StartupsList from './components/StartupsList'
 import ServiceStatus from './components/ServiceStatus'
 
+// CSS-in-JS styles
+const styles = {
+  container: {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+  },
+  containerDark: {
+    background: 'linear-gradient(135deg, #0F0E13 0%, #1a1a1a 100%)',
+    color: '#e5e5e5',
+  },
+  header: {
+    position: 'relative',
+    zIndex: 10,
+    padding: '24px',
+  },
+  headerContent: {
+    maxWidth: '1280px',
+    margin: '0 auto',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  },
+  logoIcon: {
+    width: '32px',
+    height: '32px',
+    background: 'linear-gradient(135deg, #CA4E79 0%, #E879A6 100%)',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: '14px',
+  },
+  logoText: {
+    fontSize: '20px',
+    fontWeight: 'bold',
+    background: 'linear-gradient(135deg, #CA4E79 0%, #E879A6 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  },
+  nav: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+  },
+  navDesktop: {
+    display: 'none',
+    '@media (min-width: 768px)': {
+      display: 'flex',
+    },
+  },
+  navButton: {
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontWeight: '500',
+    transition: 'all 0.2s ease',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  navButtonActive: {
+    background: '#CA4E79',
+    color: 'white',
+    boxShadow: '0 4px 12px rgba(202, 78, 121, 0.3)',
+  },
+  navButtonInactive: {
+    background: 'transparent',
+    color: '#6b7280',
+  },
+  walletInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '8px 12px',
+    background: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(12px)',
+    borderRadius: '8px',
+    border: '1px solid rgba(229, 231, 235, 0.5)',
+  },
+  walletInfoDark: {
+    background: 'rgba(29, 28, 36, 0.8)',
+    border: '1px solid rgba(55, 65, 81, 0.5)',
+  },
+  darkModeButton: {
+    padding: '8px',
+    borderRadius: '8px',
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    color: '#6b7280',
+    transition: 'all 0.2s ease',
+  },
+  main: {
+    flex: 1,
+    padding: '0 24px 80px',
+  },
+  mobileNav: {
+    display: 'block',
+    padding: '0 24px 24px',
+    '@media (min-width: 768px)': {
+      display: 'none',
+    },
+  },
+  mobileNavContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    background: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(12px)',
+    borderRadius: '8px',
+    padding: '8px',
+    border: '1px solid rgba(229, 231, 235, 0.5)',
+  },
+  serviceStatus: {
+    position: 'fixed',
+    bottom: '24px',
+    left: '24px',
+  },
+}
+
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -34,12 +164,12 @@ function App() {
     localStorage.setItem('darkMode', newDarkMode.toString())
   }
 
-  // Apply dark mode class to document
+  // Apply dark mode to document
   useEffect(() => {
     if (darkMode) {
-      document.documentElement.classList.add('dark')
+      document.documentElement.setAttribute('data-theme', 'dark')
     } else {
-      document.documentElement.classList.remove('dark')
+      document.documentElement.setAttribute('data-theme', 'light')
     }
   }, [darkMode])
 
@@ -90,26 +220,29 @@ function App() {
   // Show wallet connection screen if not connected
   if (!account) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-dark-950 dark:to-dark-900">
+      <div style={{
+        ...styles.container,
+        ...(darkMode ? styles.containerDark : {})
+      }}>
         {/* Header */}
-        <header className="relative z-10 p-6">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <header style={styles.header}>
+          <div style={styles.headerContent}>
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-3"
+              style={styles.logo}
             >
-              <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SP</span>
+              <div style={styles.logoIcon}>
+                <span>SP</span>
               </div>
-              <h1 className="text-xl font-bold gradient-text">SuperPage</h1>
+              <h1 style={styles.logoText}>SuperPage</h1>
             </motion.div>
-            
+
             <motion.button
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               onClick={toggleDarkMode}
-              className="btn-ghost"
+              style={styles.darkModeButton}
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -118,12 +251,18 @@ function App() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 flex items-center justify-center px-6 pb-20">
+        <main style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '0 24px 80px',
+        }}>
           <WalletConnect />
         </main>
 
         {/* Service Status */}
-        <div className="fixed bottom-6 left-6">
+        <div style={styles.serviceStatus}>
           <ServiceStatus />
         </div>
       </div>
@@ -131,49 +270,57 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-dark-950 dark:to-dark-900">
+    <div style={{
+      ...styles.container,
+      ...(darkMode ? styles.containerDark : {})
+    }}>
       {/* Header */}
-      <header className="relative z-10 p-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <header style={styles.header}>
+        <div style={styles.headerContent}>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-3"
+            style={styles.logo}
           >
-            <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">SP</span>
+            <div style={styles.logoIcon}>
+              <span>SP</span>
             </div>
-            <h1 className="text-xl font-bold gradient-text">SuperPage</h1>
+            <h1 style={styles.logoText}>SuperPage</h1>
           </motion.div>
-          
-          <div className="flex items-center space-x-4">
+
+          <div style={styles.nav}>
             {/* Navigation */}
             <motion.nav
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="hidden md:flex items-center space-x-2"
+              style={{
+                display: 'none',
+                alignItems: 'center',
+                gap: '8px',
+                '@media (min-width: 768px)': {
+                  display: 'flex',
+                },
+              }}
             >
               <button
                 onClick={() => setCurrentView('form')}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  currentView === 'form'
-                    ? 'bg-primary-500 text-white shadow-lg'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-dark-800'
-                }`}
+                style={{
+                  ...styles.navButton,
+                  ...(currentView === 'form' ? styles.navButtonActive : styles.navButtonInactive),
+                }}
               >
-                <Zap size={16} className="inline mr-2" />
+                <Zap size={16} />
                 Predict
               </button>
 
               <button
                 onClick={handleViewStartups}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  currentView === 'startups'
-                    ? 'bg-primary-500 text-white shadow-lg'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-dark-800'
-                }`}
+                style={{
+                  ...styles.navButton,
+                  ...(currentView === 'startups' ? styles.navButtonActive : styles.navButtonInactive),
+                }}
               >
-                <BarChart3 size={16} className="inline mr-2" />
+                <BarChart3 size={16} />
                 Explore
               </button>
             </motion.nav>
@@ -182,13 +329,26 @@ function App() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center space-x-2 px-3 py-2 bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-dark-700"
+              style={{
+                ...styles.walletInfo,
+                ...(darkMode ? styles.walletInfoDark : {}),
+              }}
             >
-              <Wallet size={16} className="text-primary-500" />
-              <span className="text-sm font-mono text-gray-600 dark:text-gray-400">
+              <Wallet size={16} style={{ color: '#CA4E79' }} />
+              <span style={{
+                fontSize: '14px',
+                fontFamily: 'monospace',
+                color: darkMode ? '#9ca3af' : '#6b7280',
+              }}>
                 {account.slice(0, 6)}...{account.slice(-4)}
               </span>
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <div style={{
+                width: '8px',
+                height: '8px',
+                background: '#10b981',
+                borderRadius: '50%',
+                animation: 'pulse 2s infinite',
+              }} />
             </motion.div>
 
             {/* Dark Mode Toggle */}
@@ -196,7 +356,7 @@ function App() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               onClick={toggleDarkMode}
-              className="btn-ghost"
+              style={styles.darkModeButton}
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -206,37 +366,66 @@ function App() {
       </header>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden px-6 mb-6">
-        <div className="flex items-center space-x-2 bg-white/80 dark:bg-dark-800/80 backdrop-blur-sm rounded-lg p-2 border border-gray-200 dark:border-dark-700">
+      <div style={{
+        display: 'block',
+        padding: '0 24px 24px',
+        '@media (min-width: 768px)': {
+          display: 'none',
+        },
+      }}>
+        <div style={{
+          ...styles.mobileNavContainer,
+          ...(darkMode ? styles.walletInfoDark : {}),
+        }}>
           <button
             onClick={() => setCurrentView('form')}
-            className={`flex-1 px-3 py-2 rounded-lg font-medium transition-all duration-200 text-sm ${
-              currentView === 'form'
-                ? 'bg-primary-500 text-white shadow-lg'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              borderRadius: '8px',
+              fontWeight: '500',
+              transition: 'all 0.2s ease',
+              fontSize: '14px',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              ...(currentView === 'form' ? styles.navButtonActive : styles.navButtonInactive),
+            }}
           >
-            <Zap size={14} className="inline mr-1" />
+            <Zap size={14} />
             Predict
           </button>
 
           <button
             onClick={handleViewStartups}
-            className={`flex-1 px-3 py-2 rounded-lg font-medium transition-all duration-200 text-sm ${
-              currentView === 'startups'
-                ? 'bg-primary-500 text-white shadow-lg'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              borderRadius: '8px',
+              fontWeight: '500',
+              transition: 'all 0.2s ease',
+              fontSize: '14px',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              ...(currentView === 'startups' ? styles.navButtonActive : styles.navButtonInactive),
+            }}
           >
-            <BarChart3 size={14} className="inline mr-1" />
+            <BarChart3 size={14} />
             Explore
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 px-6 pb-20">
-        <div className="w-full">
+      <main style={styles.main}>
+        <div style={{ width: '100%' }}>
           <AnimatePresence mode="wait">
             {currentView === 'form' ? (
               <motion.div
@@ -245,7 +434,7 @@ function App() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
-                className="max-w-4xl mx-auto"
+                style={{ maxWidth: '1024px', margin: '0 auto' }}
               >
                 <PitchForm
                   onPredictionSuccess={handlePredictionSuccess}
@@ -284,7 +473,7 @@ function App() {
       </main>
 
       {/* Service Status */}
-      <div className="fixed bottom-6 left-6">
+      <div style={styles.serviceStatus}>
         <ServiceStatus />
       </div>
     </div>
