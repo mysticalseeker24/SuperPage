@@ -172,14 +172,29 @@ const navItems = [
 const Layout = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('darkMode') === 'true' || 
+      return localStorage.getItem('darkMode') === 'true' ||
              (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)
     }
     return false
   })
 
+  const [isMobile, setIsMobile] = useState(false)
+
   const location = useLocation()
   const { account, isConnecting, connectWallet, isMetaMaskInstalled } = useWallet()
+
+  // Handle responsive design
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    // Set initial value
+    handleResize()
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -265,7 +280,7 @@ const Layout = ({ children }) => {
               transition={{ duration: 0.5, delay: 0.1 }}
               style={{
                 ...styles.navDesktop,
-                display: window.innerWidth >= 768 ? 'flex' : 'none',
+                display: !isMobile ? 'flex' : 'none',
               }}
             >
               {navItems.map((item) => (
@@ -273,53 +288,31 @@ const Layout = ({ children }) => {
               ))}
             </motion.nav>
 
-            {/* Wallet Info */}
-            {account && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                style={{
-                  ...styles.walletInfo,
-                  ...(darkMode ? styles.walletInfoDark : {}),
-                }}
-              >
-                <Wallet size={16} style={{ color: '#CA4E79' }} />
-                <span style={{
-                  fontFamily: 'monospace',
-                  color: darkMode ? '#9ca3af' : '#6b7280',
-                }}>
-                  {account.slice(0, 6)}...{account.slice(-4)}
-                </span>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  background: '#10b981',
-                  borderRadius: '50%',
-                  animation: 'pulse 2s infinite',
-                }} />
-              </motion.div>
-            )}
-
-            {/* Connect Wallet Button */}
-            {!account && (
-              <motion.button
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                onClick={connectWallet}
-                disabled={isConnecting || !isMetaMaskInstalled}
-                style={{
-                  ...styles.navLink,
-                  ...styles.navLinkActive,
-                  opacity: isConnecting ? 0.7 : 1,
-                  cursor: isConnecting ? 'not-allowed' : 'pointer',
-                }}
-              >
-                <Wallet size={16} />
-                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-              </motion.button>
-            )}
+            {/* Wallet Info - Always shown since WalletGate ensures connection */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              style={{
+                ...styles.walletInfo,
+                ...(darkMode ? styles.walletInfoDark : {}),
+              }}
+            >
+              <Wallet size={16} style={{ color: '#CA4E79' }} />
+              <span style={{
+                fontFamily: 'monospace',
+                color: darkMode ? '#9ca3af' : '#6b7280',
+              }}>
+                {account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connected'}
+              </span>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                background: '#10b981',
+                borderRadius: '50%',
+                animation: 'pulse 2s infinite',
+              }} />
+            </motion.div>
 
             {/* Dark Mode Toggle */}
             <motion.button
@@ -340,7 +333,7 @@ const Layout = ({ children }) => {
       <div style={{
         ...styles.mobileNav,
         ...(darkMode ? styles.mobileNavDark : {}),
-        display: window.innerWidth < 768 ? 'block' : 'none',
+        display: isMobile ? 'block' : 'none',
       }}>
         <div style={styles.mobileNavContainer}>
           {navItems.map((item) => (

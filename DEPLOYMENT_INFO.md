@@ -40,9 +40,10 @@ ETHERSCAN_API_KEY=PEK4R6W3IDZGATUF3JDU7KTGBCGWM6UJRA
 - **Network**: Sepolia testnet for development and testing
 
 ### Service Endpoints
+- **Frontend Application**: http://localhost:3000 (Requires MetaMask wallet connection)
 - **Blockchain Service**: http://localhost:8003
 - **Prediction Service**: http://localhost:8002
-- **Ingestion Service**: http://localhost:8000
+- **Ingestion Service**: http://localhost:8010
 - **Preprocessing Service**: http://localhost:8001
 
 ### Quick Verification Commands
@@ -61,8 +62,16 @@ curl http://localhost:8003/transaction/0x0528026d188b6fbaed14d8b92c85fbd74136a30
 1. **Previous**: `0x45341d82d59b3C4C43101782d97a4dBb97a42dba` (deprecated)
 2. **Current**: `0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D` (active)
 
+### Frontend Integration
+- **Wallet Authentication**: Mandatory MetaMask connection before site access
+- **Smart Contract Integration**: Direct interaction with deployed contract
+- **Real-time Updates**: Live transaction status and prediction storage
+- **User Experience**: Seamless Web3 integration with beautiful UI
+
 ### Notes
 - Successfully deployed with reduced gas costs
 - All environment files and documentation updated
+- Frontend application with wallet-first authentication implemented
 - Ready for production use on Sepolia testnet
 - Contract verified and operational
+- Complete end-to-end Web3 application ready

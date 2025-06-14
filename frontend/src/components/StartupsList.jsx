@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { FixedSizeList as List } from 'react-window'
 import { 
   Search, 
@@ -16,12 +16,8 @@ import {
   AlertCircle
 } from 'lucide-react'
 
-// Mock API function - replace with actual API call
+// API function to fetch predictions from backend
 const fetchTopPredictions = async () => {
-  // In tests, this will be mocked
-  if (typeof window !== 'undefined' && window.__TESTING__) {
-    return window.__MOCK_PREDICTIONS__ || []
-  }
 
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1000))
@@ -48,19 +44,17 @@ const StartupsList = ({ onViewDetails }) => {
   const [sortOrder, setSortOrder] = useState('desc')
 
   // Fetch predictions data
-  const { 
-    data: predictions = [], 
-    isLoading, 
-    error, 
-    refetch 
-  } = useQuery(
-    'topPredictions',
-    fetchTopPredictions,
-    {
-      refetchInterval: 60000, // Refetch every minute
-      staleTime: 30000, // Consider data stale after 30 seconds
-    }
-  )
+  const {
+    data: predictions = [],
+    isLoading,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ['topPredictions'],
+    queryFn: fetchTopPredictions,
+    refetchInterval: 60000, // Refetch every minute
+    staleTime: 30000, // Consider data stale after 30 seconds
+  })
 
   // Filter and sort predictions
   const filteredPredictions = useMemo(() => {

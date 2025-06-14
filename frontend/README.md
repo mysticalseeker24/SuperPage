@@ -40,11 +40,13 @@ The SuperPage frontend is a modern, responsive React application that provides a
 
 ## 🚀 Features
 
-### 🔐 Wallet Integration
-- **MetaMask Connection**: Seamless Web3 wallet integration
+### 🔐 Wallet-First Authentication
+- **Mandatory MetaMask**: Required wallet connection before site access
+- **Auto-Detection**: Checks for existing wallet connections
 - **Network Detection**: Auto-switch to Sepolia testnet
-- **Connection Persistence**: Remember wallet state
-- **Error Handling**: Comprehensive error messages
+- **Connection Persistence**: Remember wallet state across sessions
+- **Security Gate**: Complete site protection with wallet authentication
+- **Error Handling**: Comprehensive error messages and installation prompts
 
 ### 📊 Prediction Interface
 - **Interactive Form**: 7-feature input matching ML model
@@ -91,8 +93,6 @@ The SuperPage frontend is a modern, responsive React application that provides a
 
 ### Development Tools
 - **ESLint** - Code linting
-- **Vitest** - Unit testing
-- **Testing Library** - Component testing
 - **TypeScript Support** - Type checking (optional)
 
 ## 📁 Project Structure
@@ -191,18 +191,7 @@ const styles = {
 }
 ```
 
-## 🧪 Testing
 
-```bash
-# Run unit tests
-npm test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run tests in watch mode
-npm run test:watch
-```
 
 ## 🏗️ Build & Deploy
 

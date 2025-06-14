@@ -1,28 +1,18 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
-import { useMutation } from 'react-query'
-import { 
-  Send, 
-  Loader2, 
-  TrendingUp, 
-  Users, 
-  DollarSign, 
-  Link as LinkIcon,
-  AlertCircle,
-  Info
-} from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { Send, Loader2, AlertCircle } from 'lucide-react'
 import { predictionService, convertPitchToFeatures } from '../services/api'
 
 const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-    setValue,
   } = useForm({
     defaultValues: {
       pitchTitle: '',
@@ -35,30 +25,24 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
     },
   })
 
-  // Watch form values for real-time updates
   const watchedValues = watch()
 
-  // Prediction mutation
-  const predictionMutation = useMutation(
-    async (formData) => {
+  const predictionMutation = useMutation({
+    mutationFn: async (formData) => {
       const features = convertPitchToFeatures(formData)
-      console.log('Sending features to prediction service:', features)
       return await predictionService.predict(features)
     },
-    {
-      onSuccess: (data) => {
-        console.log('Prediction successful:', data)
-        onPredictionSuccess({
-          ...data,
-          formData: watchedValues,
-          walletAddress,
-        })
-      },
-      onError: (error) => {
-        console.error('Prediction failed:', error)
-      },
-    }
-  )
+    onSuccess: (data) => {
+      onPredictionSuccess({
+        ...data,
+        formData: watchedValues,
+        walletAddress,
+      })
+    },
+    onError: (error) => {
+      console.error('Prediction failed:', error)
+    },
+  })
 
   const onSubmit = async (data) => {
     setIsSubmitting(true)
@@ -93,14 +77,36 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
       variants={formVariants}
       initial="hidden"
       animate="visible"
-      className="max-w-2xl mx-auto"
+      style={{
+        maxWidth: '600px',
+        margin: '0 auto',
+        padding: '20px',
+      }}
     >
       {/* Header */}
-      <motion.div variants={fieldVariants} className="text-center mb-8">
-        <h2 className="text-3xl font-bold gradient-text mb-4">
+      <motion.div
+        variants={fieldVariants}
+        style={{
+          textAlign: 'center',
+          marginBottom: '32px',
+        }}
+      >
+        <h2 style={{
+          fontSize: '32px',
+          fontWeight: 'bold',
+          background: 'linear-gradient(135deg, #CA4E79 0%, #E879A6 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          marginBottom: '16px',
+        }}>
           Predict Your Fundraising Success
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 text-lg">
+        <p style={{
+          color: '#6b7280',
+          fontSize: '18px',
+          lineHeight: '1.6',
+        }}>
           Get AI-powered insights into your startup's fundraising potential using our federated learning model.
         </p>
       </motion.div>

@@ -4,7 +4,7 @@
 
 ## 🎯 Overview
 
-The SuperPage frontend is a modern React application that provides an intuitive interface for Web3 fundraising prediction. Built with CSS-in-JS and Framer Motion (no Tailwind), it features complete page routing, responsive design, and seamless integration with all backend microservices and MetaMask for blockchain functionality.
+The SuperPage frontend is a modern React application that provides an intuitive interface for Web3 fundraising prediction. Built with CSS-in-JS and Framer Motion (no Tailwind), it features **mandatory wallet authentication**, complete page routing, responsive design, and seamless integration with all backend microservices and MetaMask for blockchain functionality.
 
 ## 🚀 Quick Start
 
@@ -64,11 +64,15 @@ The frontend requires these backend services to be running:
 
 ## 🎨 Features
 
-### 🔐 Wallet Integration
-- **MetaMask Connection**: Seamless Web3 wallet integration
+### 🔐 Wallet-First Authentication
+- **Mandatory Connection**: Site access requires MetaMask wallet connection
+- **Beautiful Gate**: Glassmorphism authentication screen with animations
+- **Auto-Detection**: Checks for existing wallet connections on load
+- **MetaMask Installation**: Prompts and guides users to install MetaMask
 - **Network Detection**: Auto-switch to Sepolia testnet
-- **Connection Persistence**: Remembers wallet state
-- **Error Handling**: Comprehensive error messages
+- **Connection Persistence**: Remembers wallet state across sessions
+- **Security Enforcement**: Automatic logout and page reload on disconnection
+- **Error Handling**: Comprehensive error messages and recovery options
 
 ### 📊 Prediction Interface
 - **Interactive Form**: 7-feature input matching ML model
@@ -110,9 +114,6 @@ npm run preview
 
 # Run linting
 npm run lint
-
-# Run tests
-npm test
 ```
 
 ### Project Structure
@@ -198,11 +199,16 @@ Form inputs are converted to ML features:
 
 ## 🎯 User Flow
 
-### 1. Wallet Connection
+### 1. Wallet Authentication Gate
 1. User opens application
-2. Prompted to connect MetaMask
-3. Approve connection and switch to Sepolia
-4. Wallet address displayed in header
+2. **WalletGate** blocks access until wallet connected
+3. System checks for existing MetaMask installation
+4. If not installed, shows installation prompt with direct link
+5. User clicks "Connect MetaMask Wallet"
+6. MetaMask popup for connection approval
+7. Auto-switch to Sepolia testnet if needed
+8. **Access granted** - user enters full application
+9. Wallet address displayed in header with connection indicator
 
 ### 2. Prediction Process
 1. Fill out 7-feature pitch form

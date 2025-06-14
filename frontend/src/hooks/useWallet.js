@@ -29,17 +29,21 @@ export const useWallet = () => {
       checkMetaMask()
     }
 
-    window.addEventListener('ethereum#initialized', handleEthereum, {
-      once: true,
-    })
+    if (typeof window !== 'undefined') {
+      window.addEventListener('ethereum#initialized', handleEthereum, {
+        once: true,
+      })
 
-    // If MetaMask is not detected, check again after a delay
-    if (!window.ethereum) {
-      setTimeout(checkMetaMask, 1000)
+      // If MetaMask is not detected, check again after a delay
+      if (!window.ethereum) {
+        setTimeout(checkMetaMask, 1000)
+      }
     }
 
     return () => {
-      window.removeEventListener('ethereum#initialized', handleEthereum)
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('ethereum#initialized', handleEthereum)
+      }
     }
   }, [])
 
@@ -97,7 +101,7 @@ export const useWallet = () => {
 
   // Switch to Sepolia network
   const switchToSepolia = useCallback(async () => {
-    if (!window.ethereum) return
+    if (typeof window === 'undefined' || !window.ethereum) return
 
     try {
       await window.ethereum.request({
@@ -137,14 +141,17 @@ export const useWallet = () => {
 
   // Listen for account changes
   useEffect(() => {
-    if (!window.ethereum) return
+    if (typeof window === 'undefined' || !window.ethereum) return
 
     const handleAccountsChanged = (accounts) => {
       if (accounts.length === 0) {
+        // Force user back to wallet gate
         disconnectWallet()
+        window.location.reload()
       } else if (accounts[0] !== account) {
         setAccount(accounts[0])
         localStorage.setItem('walletConnected', 'true')
+        localStorage.setItem('walletAddress', accounts[0])
       }
     }
 
@@ -155,7 +162,9 @@ export const useWallet = () => {
     }
 
     const handleDisconnect = () => {
+      // Force user back to wallet gate
       disconnectWallet()
+      window.location.reload()
     }
 
     window.ethereum.on('accountsChanged', handleAccountsChanged)

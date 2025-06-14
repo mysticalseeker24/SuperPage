@@ -50,7 +50,10 @@ start-superpage.bat development
 
 ### 3. Verify Services
 ```bash
-# Check all services are healthy
+# Check frontend is running
+curl http://localhost:3000  # Frontend (requires MetaMask)
+
+# Check all backend services are healthy
 curl http://localhost:8010/health  # Ingestion
 curl http://localhost:8001/health  # Preprocessing
 curl http://localhost:8002/health  # Prediction
@@ -61,17 +64,24 @@ curl http://localhost:8003/health  # Blockchain
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Ingestion     │───▶│  Preprocessing  │───▶│   Prediction    │
-│   Service       │    │    Service      │    │    Service      │
-│   Port 8010     │    │   Port 8001     │    │   Port 8002     │
+│    Frontend     │───▶│   Ingestion     │───▶│  Preprocessing  │
+│  Application    │    │   Service       │    │    Service      │
+│   Port 3000     │    │   Port 8010     │    │   Port 8001     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│    MongoDB      │    │   Training      │    │   Blockchain    │
-│   Database      │    │   Service       │    │    Service      │
-│   Port 27017    │    │   (CLI/Batch)   │    │   Port 8003     │
+│   Prediction    │    │    MongoDB      │    │   Training      │
+│    Service      │    │   Database      │    │   Service       │
+│   Port 8002     │    │   Port 27017    │    │   (CLI/Batch)   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Blockchain    │
+│    Service      │
+│   Port 8003     │
+└─────────────────┘
 ```
 
 ## 🔧 Configuration Files

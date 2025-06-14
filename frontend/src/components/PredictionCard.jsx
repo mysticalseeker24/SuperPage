@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useMutation } from 'react-query'
+import { useMutation } from '@tanstack/react-query'
 import { 
   ArrowLeft, 
   TrendingUp, 
@@ -26,8 +26,8 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
   const isPositive = successProbability >= 50
 
   // Blockchain publish mutation
-  const publishMutation = useMutation(
-    async () => {
+  const publishMutation = useMutation({
+    mutationFn: async () => {
       const publishData = {
         project_id: `${walletAddress}-${Date.now()}`,
         score: score,
@@ -44,20 +44,18 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
           confidence: Math.max(...Object.values(explanations || {})),
         }
       }
-      
+
       return await blockchainService.publish(publishData)
     },
-    {
-      onSuccess: (result) => {
-        console.log('Blockchain publish successful:', result)
-        setPublishResult({ success: true, data: result })
-      },
-      onError: (error) => {
-        console.error('Blockchain publish failed:', error)
-        setPublishResult({ success: false, error: error.message })
-      },
-    }
-  )
+    onSuccess: (result) => {
+      console.log('Blockchain publish successful:', result)
+      setPublishResult({ success: true, data: result })
+    },
+    onError: (error) => {
+      console.error('Blockchain publish failed:', error)
+      setPublishResult({ success: false, error: error.message })
+    },
+  })
 
   const handlePublishToBlockchain = async () => {
     setIsPublishing(true)

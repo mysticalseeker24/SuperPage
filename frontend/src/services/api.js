@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { apiClients } from '../api/clients'
+import { apiClients } from '../api/clients.js'
 
 // Create axios instances for each service
 const createApiInstance = (baseURL, serviceName) => {

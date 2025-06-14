@@ -6,7 +6,8 @@ This guide ensures compatibility across different Python versions, operating sys
 
 ### System Requirements
 - **Python**: 3.9 - 3.12 (3.13 has limited ML library support)
-- **Node.js**: 16+ (for smart contracts)
+- **Node.js**: 18+ (for smart contracts and frontend)
+- **MetaMask**: Browser extension for wallet authentication
 - **Memory**: 8GB RAM minimum
 - **Storage**: 10GB free space
 
@@ -75,7 +76,14 @@ pip install -r requirements.txt
 cd ../..
 ```
 
-#### Step 4: Install Smart Contract Dependencies
+#### Step 4: Install Frontend Dependencies
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+#### Step 5: Install Smart Contract Dependencies
 ```bash
 cd smart-contracts
 npm install

@@ -1,6 +1,7 @@
 ﻿import React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Router from './components/Router'
+import WalletGate from './components/WalletGate'
 import './index.css'
 
 const queryClient = new QueryClient({
@@ -8,7 +9,7 @@ const queryClient = new QueryClient({
     queries: {
       retry: 2,
       staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
+      gcTime: 10 * 60 * 1000, // React Query v5 uses gcTime instead of cacheTime
     },
   },
 })
@@ -16,7 +17,9 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
+      <WalletGate>
+        <Router />
+      </WalletGate>
     </QueryClientProvider>
   )
 }

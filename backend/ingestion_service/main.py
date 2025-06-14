@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 import httpx
 import structlog
 from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, ValidationError
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -79,6 +80,15 @@ app = FastAPI(
     description="StartUp data ingestion service using Firecrawl MCP SDK",
     version="1.0.0",
     lifespan=lifespan
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure appropriately for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Environment variables

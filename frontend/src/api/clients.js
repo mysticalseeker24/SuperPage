@@ -56,7 +56,7 @@ const showToast = (message, type = 'error') => {
 }
 
 // Get API base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_BASE_URL = (typeof window !== 'undefined' && import.meta?.env?.VITE_API_URL) || 'http://localhost:8000'
 
 // Create axios instance
 const apiClient = axios.create({
@@ -309,11 +309,13 @@ export const apiClients = {
 }
 
 // Initialize wallet address from localStorage on module load
-const savedAddress = localStorage.getItem('walletAddress')
-const wasConnected = localStorage.getItem('walletConnected') === 'true'
+if (typeof window !== 'undefined') {
+  const savedAddress = localStorage.getItem('walletAddress')
+  const wasConnected = localStorage.getItem('walletConnected') === 'true'
 
-if (savedAddress && wasConnected) {
-  connectedAddress = savedAddress
+  if (savedAddress && wasConnected) {
+    connectedAddress = savedAddress
+  }
 }
 
 export default apiClients

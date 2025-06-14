@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 import { useWallet } from '../hooks/useWallet'
-import PitchForm from './PitchForm'
+import PitchForm from './PitchFormSimple'
 import PredictionCard from './PredictionCard'
 import WalletConnect from './WalletConnect'
 
@@ -89,34 +89,7 @@ const PredictPage = () => {
     setPredictionData(null)
   }
 
-  // Show wallet connection prompt if not connected
-  if (!account) {
-    return (
-      <div style={styles.container}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          style={styles.walletPrompt}
-        >
-          <h2 style={{
-            ...styles.walletPromptTitle,
-            ...(isDark ? styles.walletPromptTitleDark : {})
-          }}>
-            Connect Your Wallet to Continue
-          </h2>
-          <p style={{
-            ...styles.walletPromptText,
-            ...(isDark ? styles.walletPromptTextDark : {})
-          }}>
-            To use SuperPage's AI prediction engine, please connect your MetaMask wallet. 
-            This ensures secure access and enables blockchain verification of your predictions.
-          </p>
-          <WalletConnect />
-        </motion.div>
-      </div>
-    )
-  }
+  // Wallet is guaranteed to be connected due to WalletGate
 
   return (
     <div style={styles.container}>

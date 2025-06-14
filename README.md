@@ -67,13 +67,17 @@ SuperPage/
 - **Structured Logging**: Comprehensive monitoring across all microservices
 
 ### 🌐 Modern Frontend Experience
-- **React Router DOM**: Complete page routing with /predict, /explore, /about, /404
-- **AboutPage**: Markdown-rendered documentation with scroll animations
-- **HomePage**: Hero section, features grid, and interactive stats dashboard
-- **ExplorePage**: Community predictions with filtering, search, and modal details
-- **Centralized API Client**: Unified axios client with error handling and toast notifications
-- **CSS-in-JS**: No framework dependencies, pure inline styles with Framer Motion
-- **Responsive Design**: Mobile-first approach with sticky navigation and dark mode
+- **🔐 Wallet-First Authentication**: Mandatory MetaMask connection before site access
+- **🎨 Beautiful UI**: Glassmorphism design with smooth Framer Motion animations
+- **📱 Responsive Design**: Mobile-first approach with sticky navigation and dark mode
+- **🔄 Auto-Reconnection**: Seamless wallet state persistence across sessions
+- **🛡️ Security Gate**: Complete site protection with wallet authentication
+- **📄 React Router DOM**: Complete page routing with /predict, /explore, /about, /404
+- **📋 AboutPage**: Comprehensive documentation with interactive dropdowns
+- **🏠 HomePage**: Hero section, features grid, and interactive stats dashboard
+- **🔍 ExplorePage**: Community predictions with filtering, search, and modal details
+- **🌐 Centralized API Client**: Unified axios client with error handling and toast notifications
+- **🎯 CSS-in-JS**: No framework dependencies, pure inline styles with Framer Motion
 
 ## 🛠️ Tech Stack
 
@@ -179,12 +183,14 @@ All services are pre-configured with production credentials:
    ```
 
 2. **Access services**
-   - **Frontend UI**: http://localhost:3000 (React application)
+   - **Frontend UI**: http://localhost:3000 (React application with wallet authentication)
    - **Ingestion API**: http://localhost:8010/docs
    - **Preprocessing API**: http://localhost:8001/docs
    - **Prediction API**: http://localhost:8002/docs
    - **Blockchain API**: http://localhost:8003/docs
    - **Database UI**: http://localhost:8081 (development)
+
+   **Note**: Frontend requires MetaMask wallet connection before access
 
 ### Option 2: Individual Services
 

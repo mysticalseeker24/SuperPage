@@ -4,7 +4,8 @@ This guide will help you run the entire SuperPage system with all services worki
 
 ## 🎯 System Overview
 
-SuperPage consists of 5 microservices + smart contracts:
+SuperPage consists of 5 microservices + frontend + smart contracts:
+- **Frontend Application** (Port 3000) - React UI with wallet authentication
 - **Ingestion Service** (Port 8010) - Web3 data scraping
 - **Preprocessing Service** (Port 8001) - ML feature extraction
 - **Training Service** (CLI) - Federated learning
@@ -47,6 +48,7 @@ cd backend/ingestion_service && pip install -r requirements.txt && cd ../..
 cd backend/preprocessing_service && pip install -r requirements.txt && cd ../..
 cd backend/prediction_service && pip install -r requirements.txt && cd ../..
 cd backend/blockchain_service && pip install -r requirements.txt && npm install && cd ../..
+cd frontend && npm install && cd ..
 cd smart-contracts && npm install && cd ..
 ```
 
@@ -64,33 +66,39 @@ This will create the model files needed by the prediction service:
 
 ### Step 3: Start All Services
 
-Open 5 separate terminals and run each service:
+Open 6 separate terminals and run each service:
 
-#### Terminal 1: Ingestion Service (Port 8010)
+#### Terminal 1: Frontend Application (Port 3000)
+```bash
+cd frontend
+npm run dev
+```
+
+#### Terminal 2: Ingestion Service (Port 8010)
 ```bash
 cd backend/ingestion_service
 python main.py
 ```
 
-#### Terminal 2: Preprocessing Service (Port 8001)
+#### Terminal 3: Preprocessing Service (Port 8001)
 ```bash
 cd backend/preprocessing_service
 python main.py
 ```
 
-#### Terminal 3: Prediction Service (Port 8002)
+#### Terminal 4: Prediction Service (Port 8002)
 ```bash
 cd backend/prediction_service
 python main.py
 ```
 
-#### Terminal 4: Blockchain Service (Port 8003)
+#### Terminal 5: Blockchain Service (Port 8003)
 ```bash
 cd backend/blockchain_service
 python main.py
 ```
 
-#### Terminal 5: Monitor Logs (Optional)
+#### Terminal 6: Monitor Logs (Optional)
 ```bash
 # Watch all service logs
 tail -f backend/*/logs/*.log
@@ -167,6 +175,7 @@ curl http://localhost:8003/health  # Blockchain
 ## 🔍 Monitoring and Logs
 
 ### Service URLs:
+- **Frontend Application**: http://localhost:3000 (Requires MetaMask wallet connection)
 - **Ingestion Service**: http://localhost:8010/docs
 - **Preprocessing Service**: http://localhost:8001/docs
 - **Prediction Service**: http://localhost:8002/docs
