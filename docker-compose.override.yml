@@ -8,7 +8,7 @@ services:
   ingestion-service:
     volumes:
       - ./backend/ingestion_service:/app:ro
-      - ./logs:/app/logs
+      - logs_data:/app/logs
     environment:
       - LOG_LEVEL=DEBUG
     command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8010", "--reload"]
@@ -16,7 +16,7 @@ services:
   preprocessing-service:
     volumes:
       - ./backend/preprocessing_service:/app:ro
-      - ./logs:/app/logs
+      - logs_data:/app/logs
     environment:
       - LOG_LEVEL=DEBUG
     command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
@@ -24,7 +24,7 @@ services:
   prediction-service:
     volumes:
       - ./backend/prediction_service:/app:ro
-      - ./logs:/app/logs
+      - logs_data:/app/logs
     environment:
       - LOG_LEVEL=DEBUG
     command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
@@ -32,7 +32,7 @@ services:
   blockchain-service:
     volumes:
       - ./backend/blockchain_service:/app:ro
-      - ./logs:/app/logs
+      - logs_data:/app/logs
     environment:
       - LOG_LEVEL=debug
     command: ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003", "--reload"]
@@ -71,3 +71,5 @@ services:
 volumes:
   redis_data:
     name: superpage-redis-data
+  logs_data:
+    name: superpage-logs-data

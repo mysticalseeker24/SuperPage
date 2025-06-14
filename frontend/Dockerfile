@@ -1,17 +1,27 @@
 # Multi-stage build for SuperPage Frontend
-FROM node:18-alpine AS builder
+FROM node:18-slim AS builder
 
 # Set working directory
 WORKDIR /app
 
+# Install build dependencies for native modules
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
+
+# Clear npm cache and rebuild native modules
+RUN npm rebuild
 
 # Build the application
 RUN npm run build
