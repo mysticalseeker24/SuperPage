@@ -32,7 +32,7 @@ COPY model_loader.py .
 
 # Create models directory and copy trained models
 RUN mkdir -p models/latest
-RUN echo "Models directory created - will be mounted at runtime via Docker volume"
+RUN echo 'Models directory created - will be mounted at runtime via Docker volume'
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app && \
