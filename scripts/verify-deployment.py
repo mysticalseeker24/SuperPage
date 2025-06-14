@@ -11,21 +11,26 @@ import sys
 from typing import Dict, List, Tuple
 from datetime import datetime
 
-# Service URLs (update these with your actual Render URLs)
-SERVICES = {
-    "ingestion": "https://superpage-ingestion.onrender.com",
-    "preprocessing": "https://superpage-preprocessing.onrender.com", 
-    "prediction": "https://superpage-prediction.onrender.com",
-    "blockchain": "https://superpage-blockchain.onrender.com"
-}
+# Service URLs - automatically detect environment
+import os
 
-# For local testing, uncomment these:
-# SERVICES = {
-#     "ingestion": "http://localhost:8010",
-#     "preprocessing": "http://localhost:8001",
-#     "prediction": "http://localhost:8002", 
-#     "blockchain": "http://localhost:8003"
-# }
+# Check if we're running in CI/CD or local environment
+if os.getenv('GITHUB_ACTIONS'):
+    # Production URLs for CI/CD
+    SERVICES = {
+        "ingestion": "https://superpage-ingestion.onrender.com",
+        "preprocessing": "https://superpage-preprocessing.onrender.com",
+        "prediction": "https://superpage-prediction.onrender.com",
+        "blockchain": "https://superpage-blockchain.onrender.com"
+    }
+else:
+    # Local development URLs
+    SERVICES = {
+        "ingestion": "http://localhost:8010",
+        "preprocessing": "http://localhost:8001",
+        "prediction": "http://localhost:8002",
+        "blockchain": "http://localhost:8003"
+    }
 
 async def check_service_health(session: aiohttp.ClientSession, name: str, url: str) -> Tuple[str, bool, Dict]:
     """Check health of a single service"""

@@ -150,18 +150,39 @@ jobs:
     runs-on: ubuntu-latest
     needs: [docker-build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    strategy:
-      matrix:
-        service: [ingestion, preprocessing, prediction, blockchain]
-    
+
     steps:
-    - name: 🚀 Trigger Render Deploy
+    - name: 🚀 Deploy Ingestion Service
       run: |
         curl -X POST \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
           -H "Content-Type: application/json" \
           -d '{"clearCache": false}' \
-          "https://api.render.com/v1/services/${{ secrets[format('RENDER_SERVICE_ID_{0}', matrix.service | upper)] }}/deploys"
+          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_INGESTION }}/deploys"
+
+    - name: 🚀 Deploy Preprocessing Service
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{"clearCache": false}' \
+          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_PREPROCESSING }}/deploys"
+
+    - name: 🚀 Deploy Prediction Service
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{"clearCache": false}' \
+          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_PREDICTION }}/deploys"
+
+    - name: 🚀 Deploy Blockchain Service
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{"clearCache": false}' \
+          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BLOCKCHAIN }}/deploys"
 
   # Deploy Frontend to Netlify
   deploy-netlify:
@@ -232,6 +253,8 @@ jobs:
 
     - name: 🏥 Run health checks
       run: |
+        # Wait for services to start up
+        sleep 30
         python scripts/verify-deployment.py
       timeout-minutes: 10
 
