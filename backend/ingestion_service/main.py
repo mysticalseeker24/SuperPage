@@ -9,11 +9,12 @@ import logging
 import os
 import uuid
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import httpx
 import structlog
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, ValidationError
@@ -147,6 +148,14 @@ print(f"🔧 Available schemas: {', '.join(EXTRACTION_SCHEMAS.keys()) if EXTRACT
 # MongoDB client (will be initialized on startup)
 mongo_client: Optional[AsyncIOMotorClient] = None
 database = None
+
+
+# Database dependency
+def get_database():
+    """Get database instance for dependency injection"""
+    if database is None:
+        raise HTTPException(status_code=503, detail="Database not available")
+    return database
 
 
 # Pydantic models
@@ -555,6 +564,137 @@ async def get_extraction_schemas():
         "schema_count": len(EXTRACTION_SCHEMAS),
         "default_schema_name": "default"
     }
+
+
+@app.get("/predictions/top")
+async def get_top_predictions(
+    limit: int = 50,
+    offset: int = 0,
+    min_score: float = 0.0,
+    category: Optional[str] = None,
+    db=Depends(get_database)
+):
+    """
+    Get top predictions from stored project data
+
+    Args:
+        limit: Maximum number of predictions to return (default: 50)
+        offset: Number of predictions to skip (default: 0)
+        min_score: Minimum prediction score filter (default: 0.0)
+        category: Filter by project category (optional)
+        db: Database dependency
+
+    Returns:
+        List of prediction objects with project data
+    """
+    logger.info("Fetching top predictions", limit=limit, offset=offset, min_score=min_score, category=category)
+
+    try:
+        # Build query filter
+        query_filter = {}
+
+        # Add score filter if specified
+        if min_score > 0:
+            query_filter["prediction_score"] = {"$gte": min_score}
+
+        # Add category filter if specified
+        if category:
+            query_filter["category"] = {"$regex": category, "$options": "i"}
+
+        # Query database with pagination and sorting
+        cursor = db.projects.find(
+            query_filter,
+            {
+                "_id": 0,  # Exclude MongoDB _id field
+                "project_id": 1,
+                "title": 1,
+                "description": 1,
+                "category": 1,
+                "team_experience": 1,
+                "previous_funding": 1,
+                "traction": 1,
+                "prediction_score": 1,
+                "created_at": 1,
+                "wallet_address": 1,
+                "url": 1
+            }
+        ).sort("prediction_score", -1).skip(offset).limit(limit)
+
+        # Convert cursor to list
+        predictions = []
+        async for doc in cursor:
+            # Format prediction data for frontend
+            prediction = {
+                "id": doc.get("project_id", f"project-{len(predictions) + 1}"),
+                "projectId": doc.get("project_id", f"startup-{len(predictions) + 1:03d}"),
+                "title": doc.get("title", f"Project {len(predictions) + 1}"),
+                "score": doc.get("prediction_score", 0.5),
+                "timestamp": doc.get("created_at", datetime.utcnow()).isoformat(),
+                "teamExperience": doc.get("team_experience", 5.0),
+                "previousFunding": doc.get("previous_funding", 0),
+                "traction": doc.get("traction", 1000),
+                "category": doc.get("category", "Unknown"),
+                "walletAddress": doc.get("wallet_address", "0x0000000000000000000000000000000000000000"),
+                "description": doc.get("description", ""),
+                "url": doc.get("url", "")
+            }
+            predictions.append(prediction)
+
+        # If no real data found, return sample data for demo
+        if not predictions:
+            logger.info("No stored predictions found, returning sample data")
+            predictions = generate_sample_predictions(limit)
+
+        logger.info("Successfully fetched predictions", count=len(predictions))
+
+        return {
+            "predictions": predictions,
+            "total": len(predictions),
+            "limit": limit,
+            "offset": offset,
+            "filters": {
+                "min_score": min_score,
+                "category": category
+            }
+        }
+
+    except Exception as e:
+        logger.error("Failed to fetch predictions", error=str(e))
+        # Return sample data as fallback
+        return {
+            "predictions": generate_sample_predictions(limit),
+            "total": limit,
+            "limit": limit,
+            "offset": offset,
+            "error": "Database error, showing sample data"
+        }
+
+
+def generate_sample_predictions(count: int = 50) -> List[Dict]:
+    """Generate sample prediction data for demo purposes"""
+    import random
+    from datetime import datetime, timedelta
+
+    categories = ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social', 'DAO', 'Metaverse', 'AI']
+
+    predictions = []
+    for i in range(count):
+        predictions.append({
+            "id": f"project-{i + 1}",
+            "projectId": f"startup-{i + 1:03d}",
+            "title": f"Web3 Startup {i + 1}",
+            "score": round(random.uniform(0.1, 0.95), 3),
+            "timestamp": (datetime.utcnow() - timedelta(days=random.randint(0, 30))).isoformat(),
+            "teamExperience": round(random.uniform(1, 15), 1),
+            "previousFunding": random.randint(0, 10000000),
+            "traction": random.randint(100, 25000),
+            "category": random.choice(categories),
+            "walletAddress": f"0x{random.randint(0, 16**40):040x}",
+            "description": f"Innovative {random.choice(categories)} project focused on decentralized solutions",
+            "url": f"https://startup{i + 1}.example.com"
+        })
+
+    return predictions
 
 
 if __name__ == "__main__":

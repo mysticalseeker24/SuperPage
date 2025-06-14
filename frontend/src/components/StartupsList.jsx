@@ -18,23 +18,38 @@ import {
 
 // API function to fetch predictions from backend
 const fetchTopPredictions = async () => {
+  try {
+    // Use the centralized API client to fetch real predictions
+    const response = await fetch('/api/ingestion/predictions/top?limit=50', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
 
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000))
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
 
-  // Mock data - replace with actual API call
-  return Array.from({ length: 50 }, (_, index) => ({
-    id: `project-${index + 1}`,
-    projectId: `startup-${String(index + 1).padStart(3, '0')}`,
-    title: `Startup ${index + 1}`,
-    score: Math.random(),
-    timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-    teamExperience: 2 + Math.random() * 13,
-    previousFunding: Math.random() * 10000000,
-    traction: Math.floor(Math.random() * 25000),
-    category: ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social'][Math.floor(Math.random() * 5)],
-    walletAddress: `0x${Math.random().toString(16).substr(2, 40)}`,
-  }))
+    const data = await response.json()
+    return data.predictions || []
+  } catch (error) {
+    console.error('Failed to fetch predictions:', error)
+
+    // Fallback to sample data if API fails
+    return Array.from({ length: 50 }, (_, index) => ({
+      id: `project-${index + 1}`,
+      projectId: `startup-${String(index + 1).padStart(3, '0')}`,
+      title: `Web3 Startup ${index + 1}`,
+      score: Math.random(),
+      timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      teamExperience: 2 + Math.random() * 13,
+      previousFunding: Math.random() * 10000000,
+      traction: Math.floor(Math.random() * 25000),
+      category: ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social'][Math.floor(Math.random() * 5)],
+      walletAddress: `0x${Math.random().toString(16).substr(2, 40)}`,
+    }))
+  }
 }
 
 const StartupsList = ({ onViewDetails }) => {

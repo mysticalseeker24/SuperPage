@@ -105,7 +105,7 @@ class FundraisingPredictor(nn.Module):
 class DataProcessor:
     """Handles data loading, preprocessing, and splitting for federated learning."""
     
-    def __init__(self, data_path: str = "../../Dataset/dummy_dataset_aligned.csv"):
+    def __init__(self, data_path: str = "Dataset/dummy_dataset_aligned.csv"):
         self.data_path = data_path
         self.scaler = StandardScaler()
         self.feature_columns = [
@@ -571,7 +571,7 @@ def main():
                        help="Batch size for training (default: 32)")
     parser.add_argument("--clients", type=int, default=3,
                        help="Number of federated clients to simulate (default: 3)")
-    parser.add_argument("--data-path", type=str, default="../../Dataset/dummy_dataset_aligned.csv",
+    parser.add_argument("--data-path", type=str, default="Dataset/dummy_dataset_aligned.csv",
                        help="Path to training dataset")
 
     args = parser.parse_args()

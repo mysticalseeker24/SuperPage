@@ -34,6 +34,9 @@ COPY model_loader.py .
 RUN mkdir -p models/latest
 RUN echo 'Models directory created - will be mounted at runtime via Docker volume'
 
+# Create logs directory for volume mount
+RUN mkdir -p /app/logs && chmod 755 /app/logs
+
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app && \
     chown -R app:app /app

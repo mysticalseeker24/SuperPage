@@ -112,8 +112,8 @@ class ModelManager:
             self._initialized = True
             logger.info(f"ModelManager initialized on device: {self.device}")
     
-    def load_model(self, model_path: str = "../training_service/models/latest/fundraising_model.pth",
-                   scaler_path: str = "../training_service/models/latest/scaler.pkl") -> bool:
+    def load_model(self, model_path: str = "/app/models/latest/fundraising_model.pth",
+                   scaler_path: str = "/app/models/latest/scaler.pkl") -> bool:
         """
         Load the trained model and scaler.
         

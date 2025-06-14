@@ -57,6 +57,9 @@ COPY --from=node-base /app/contracts ./contracts
 # Copy Python application code
 COPY main.py .
 
+# Create logs directory for volume mount
+RUN mkdir -p /app/logs && chmod 755 /app/logs
+
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app && \
     chown -R app:app /app

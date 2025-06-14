@@ -58,9 +58,9 @@ structlog.configure(
 
 logger = structlog.get_logger(__name__)
 
-# Environment variables
-MODEL_PATH = os.getenv("MODEL_PATH", "../training_service/models/latest/fundraising_model.pth")
-SCALER_PATH = os.getenv("SCALER_PATH", "../training_service/models/latest/scaler.pkl")
+# Environment variables - Use Docker volume paths for containerized deployment
+MODEL_PATH = os.getenv("MODEL_PATH", "/app/models/latest/fundraising_model.pth")
+SCALER_PATH = os.getenv("SCALER_PATH", "/app/models/latest/scaler.pkl")
 SHAP_BACKGROUND_SAMPLES = int(os.getenv("SHAP_BACKGROUND_SAMPLES", "100"))
 
 # Global SHAP explainer
