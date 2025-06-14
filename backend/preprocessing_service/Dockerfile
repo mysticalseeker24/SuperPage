@@ -35,12 +35,13 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 RUN chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
+# Expose port (8000 for Render compatibility, 8001 for local development)
+EXPOSE 8000
 EXPOSE 8001
 
-# Health check
+# Health check (use PORT env var for flexibility)
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8001}/health || exit 1
 
-# Run the application with optimal workers
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker"]
+# Run the application with optimal workers (use PORT env var for deployment flexibility)
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8001} --workers ${WORKERS:-2}

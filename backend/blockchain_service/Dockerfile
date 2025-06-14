@@ -65,19 +65,20 @@ RUN useradd --create-home --shell /bin/bash app && \
     chown -R app:app /app
 USER app
 
-# Expose port
+# Expose port (8000 for Render compatibility, 8003 for local development)
+EXPOSE 8000
 EXPOSE 8003
 
 # Environment variables for configuration
 ENV HARDHAT_PROJECT_PATH=/app
 ENV BLOCKCHAIN_NETWORK_URL=http://localhost:8545
 
-# Health check
+# Health check (use PORT env var for flexibility)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:8003/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8003}/health || exit 1
 
-# Default command
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003"]
+# Default command (use PORT env var for deployment flexibility)
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8003}
 
 # Development variant with hot reload
 FROM python-base AS development
