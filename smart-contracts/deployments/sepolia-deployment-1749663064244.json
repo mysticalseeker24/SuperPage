@@ -1,0 +1,14 @@
+{
+  "contractName": "FundraisePrediction",
+  "contractAddress": "0x45341d82d59b3C4C43101782d97a4dBb97a42dba",
+  "deployerAddress": "0xf60944AF65a3F35b02cc251fe884767213dFAB8D",
+  "transactionHash": "0x6db95f51d4dca92e8c50629c543d8d409b8ae5462bc9ab3580e65f3ca3b73203",
+  "blockNumber": 8526907,
+  "gasUsed": "561995",
+  "gasPrice": "20000000000",
+  "deploymentCost": "0.0112399",
+  "network": "sepolia",
+  "chainId": 11155111,
+  "timestamp": "2025-06-11T17:31:04.244Z",
+  "sepoliaExplorerUrl": "https://sepolia.etherscan.io/address/0x45341d82d59b3C4C43101782d97a4dBb97a42dba"
+}

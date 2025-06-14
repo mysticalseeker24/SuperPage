@@ -1,0 +1,54 @@
+# SuperPage Prometheus Configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # SuperPage Services Monitoring
+  - job_name: 'superpage-services'
+    static_configs:
+      - targets: 
+          - 'ingestion-service:8010'
+          - 'preprocessing-service:8001'
+          - 'prediction-service:8002'
+          - 'blockchain-service:8003'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Frontend Application Monitoring
+  - job_name: 'superpage-frontend'
+    static_configs:
+      - targets: ['frontend:80']
+    metrics_path: '/health'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # MongoDB Monitoring (if metrics are exposed)
+  - job_name: 'mongodb'
+    static_configs:
+      - targets: ['mongodb:27017']
+    scrape_interval: 60s
+    scrape_timeout: 10s
+
+  # Prometheus Self-Monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+# Alerting configuration (optional)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Storage configuration
+storage:
+  tsdb:
+    retention.time: 15d
+    retention.size: 1GB

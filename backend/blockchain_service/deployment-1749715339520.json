@@ -1,0 +1,11 @@
+{
+  "contractAddress": "0x22719a545efE92Af076741758718e28C9AC165c6",
+  "deployerAddress": "0xf60944AF65a3F35b02cc251fe884767213dFAB8D",
+  "transactionHash": "0x2a26dc6a11ee752f508e4475a384a8284de1cf275554513a3fa4069381e643ee",
+  "blockNumber": null,
+  "gasUsed": "1043454",
+  "gasPrice": "20000000000",
+  "network": "sepolia",
+  "chainId": 11155111,
+  "timestamp": "2025-06-12T08:02:19.519Z"
+}

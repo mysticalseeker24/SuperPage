@@ -101,8 +101,7 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
+# Environments (keep .env files for deployment)
 .venv
 env/
 venv/
@@ -190,7 +189,7 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# dotenv environment variables file (keep main .env for deployment)
 .env.local
 .env.development.local
 .env.test.local
@@ -219,12 +218,15 @@ public
 tmp/
 temp/
 
-# Logs
-logs
-*.log
+# Logs (keep important logs for debugging)
+logs/debug.log
+logs/error.log
+# Keep startup and deployment logs
+!logs/startup.log
+!logs/deployment.log
 
-# Docker
-.dockerignore
+# Docker (keep .dockerignore for deployment)
+# .dockerignore
 
 # IDE
 .vscode/
@@ -242,29 +244,33 @@ logs
 ehthumbs.db
 Thumbs.db
 
-# Blockchain
+# Blockchain (keep artifacts for deployment)
 cache/
-artifacts/
-typechain/
-typechain-types/
+# artifacts/
+# typechain/
+# typechain-types/
 
-# ML Models
-*.pkl
-*.joblib
-models/
+# ML Models (exclude training artifacts but keep trained models)
 checkpoints/
+# Allow trained models in training service
+!backend/training_service/models/
+!backend/training_service/models/latest/
+!backend/training_service/models/latest/*.pth
+!backend/training_service/models/latest/*.pkl
 
-# Data files (except aligned datasets)
-*.csv
+# Data files (keep deployment-critical files)
+# *.csv (keep all CSV files for deployment)
 !Dataset/*_aligned.csv
-*.json
+# *.json (keep all JSON files for deployment)
 !package*.json
+!*.config.json
+!deployment*.json
 *.parquet
 *.h5
 *.hdf5
 
-# Secrets and config
+# Secrets and config (keep production config for deployment)
 secrets/
 .secrets
 config/local.yml
-config/production.yml
+# config/production.yml (keep for deployment)

@@ -141,11 +141,17 @@ start_services() {
     
     echo -e "${YELLOW}Starting blockchain service...${NC}"
     docker-compose -f $COMPOSE_FILE up -d blockchain-service
-    
+
+    # Wait for blockchain service
+    sleep 10
+
+    echo -e "${YELLOW}Starting frontend application...${NC}"
+    docker-compose -f $COMPOSE_FILE up -d frontend
+
     # Start optional services
     if [ "$ENVIRONMENT" = "development" ]; then
         echo -e "${YELLOW}Starting development tools...${NC}"
-        docker-compose -f $COMPOSE_FILE up -d mongo-express monitor 2>/dev/null || true
+        docker-compose -f $COMPOSE_FILE up -d monitor 2>/dev/null || true
     fi
     
     print_status "All services started successfully"
@@ -156,7 +162,7 @@ start_services() {
 check_health() {
     echo -e "${BLUE}🏥 Checking service health...${NC}"
     
-    services=("ingestion-service:8000" "preprocessing-service:8001" "prediction-service:8002" "blockchain-service:8003")
+    services=("ingestion-service:8010" "preprocessing-service:8001" "prediction-service:8002" "blockchain-service:8003")
     
     for service in "${services[@]}"; do
         IFS=':' read -r name port <<< "$service"
@@ -180,17 +186,17 @@ check_health() {
 # Function to display service URLs
 display_urls() {
     echo -e "${BLUE}🌐 Service URLs:${NC}"
+    echo -e "${GREEN}Frontend Application: http://localhost:3000 (Requires MetaMask)${NC}"
     echo -e "${GREEN}Ingestion Service:    http://localhost:8010/docs${NC}"
     echo -e "${GREEN}Preprocessing Service: http://localhost:8001/docs${NC}"
     echo -e "${GREEN}Prediction Service:   http://localhost:8002/docs${NC}"
     echo -e "${GREEN}Blockchain Service:   http://localhost:8003/docs${NC}"
-    
+
     if [ "$ENVIRONMENT" = "development" ]; then
-        echo -e "${GREEN}MongoDB Express:      http://localhost:8081${NC}"
         echo -e "${GREEN}Prometheus Monitor:   http://localhost:9090${NC}"
     fi
-    
-    echo -e "${GREEN}Smart Contract:       https://sepolia.etherscan.io/address/0x45341d82d59b3C4C43101782d97a4dBb97a42dba${NC}"
+
+    echo -e "${GREEN}Smart Contract:       https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D${NC}"
     echo ""
 }
 
@@ -200,7 +206,7 @@ run_tests() {
     
     # Test ingestion service
     echo -e "${YELLOW}Testing ingestion service...${NC}"
-    curl -X POST "http://localhost:8000/ingest" \
+    curl -X POST "http://localhost:8010/ingest" \
         -H "Content-Type: application/json" \
         -d '{"url": "https://github.com/ethereum/ethereum-org-website", "project_id": "test-ethereum-org"}' \
         > /dev/null 2>&1 && print_status "Ingestion service test passed" || print_warning "Ingestion service test failed"

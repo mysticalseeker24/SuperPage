@@ -1,0 +1,27 @@
+{
+  "contractAddress": "0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D",
+  "deployerAddress": "0xf60944AF65a3F35b02cc251fe884767213dFAB8D",
+  "transactionHash": "0x0528026d188b6fbaed14d8b92c85fbd74136a303396e87e3b46d884bf9700fcb",
+  "blockNumber": null,
+  "gasUsed": "1043454",
+  "gasPrice": "2000000000",
+  "network": "sepolia",
+  "chainId": 11155111,
+  "timestamp": "2025-06-12T08:04:28.811Z",
+  "contractName": "SuperPagePrediction",
+  "deploymentCost": "0.002086908",
+  "sepoliaExplorerUrl": "https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D",
+  "features": {
+    "immutableStorage": true,
+    "cryptographicProofs": true,
+    "accessControl": true,
+    "eventEmission": true,
+    "gasOptimized": true
+  },
+  "verification": {
+    "contractOwner": "0xf60944AF65a3F35b02cc251fe884767213dFAB8D",
+    "totalPredictions": 0,
+    "deployerAuthorized": true
+  },
+  "notes": "Successfully deployed SuperPagePrediction contract to Sepolia testnet with reduced gas price (2 gwei) for cost optimization."
+}

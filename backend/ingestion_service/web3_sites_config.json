@@ -1,0 +1,206 @@
+{
+  "web3_startup_sites": [
+    {
+      "name": "Hiro",
+      "url": "https://www.hiro.so/",
+      "category": "Bitcoin Development Tools",
+      "description": "Bitcoin development platform"
+    },
+    {
+      "name": "Hiro - Tracxn",
+      "url": "https://tracxn.com/d/companies/hiro/__0tJ90u9rZxAN5meOyEAxFxlaYEqZ98RtokD3_FIcIww",
+      "category": "Company Profile",
+      "description": "Hiro company profile and funding data"
+    },
+    {
+      "name": "Almanak - Tracxn",
+      "url": "https://tracxn.com/d/companies/almanak/__Iun4gDoeUByryEakTYAVcPxD-Z4LFTqCJRu1i3IyUmk",
+      "category": "Company Profile",
+      "description": "Almanak company profile and funding data"
+    },
+    {
+      "name": "Almanak",
+      "url": "https://almanak.co/",
+      "category": "Web3 Infrastructure",
+      "description": "Web3 infrastructure platform"
+    },
+    {
+      "name": "Alchemy - Tracxn",
+      "url": "https://tracxn.com/d/companies/alchemy/__WjL1CMTTJSKorF3RTSl8hIZlQKuuUhMZzsjtQOR5c2g/funding-and-investors",
+      "category": "Company Profile",
+      "description": "Alchemy funding and investor data"
+    },
+    {
+      "name": "Alchemy",
+      "url": "https://www.alchemy.com/",
+      "category": "Blockchain Infrastructure",
+      "description": "Web3 development platform and infrastructure"
+    },
+    {
+      "name": "Chainlink Labs - Tracxn",
+      "url": "https://tracxn.com/d/companies/chainlink-labs/__g8X3Le4JcLez52wOAlJtk4sQto1qnHHWPnmHBCd0ex4",
+      "category": "Company Profile",
+      "description": "Chainlink Labs company profile"
+    },
+    {
+      "name": "Chainlink Labs",
+      "url": "https://chainlinklabs.com/",
+      "category": "Oracle Network",
+      "description": "Decentralized oracle network"
+    },
+    {
+      "name": "SeedTable Web3 Startups",
+      "url": "https://www.seedtable.com/best-crypto-web3-startups",
+      "category": "Startup Directory",
+      "description": "Curated list of best crypto and Web3 startups"
+    },
+    {
+      "name": "OpenSea",
+      "url": "https://opensea.io/",
+      "category": "NFT Marketplace",
+      "description": "Leading NFT marketplace"
+    },
+    {
+      "name": "OpenSea - Tracxn",
+      "url": "https://tracxn.com/d/companies/opensea/__PgZo-l1S-uMjJHJx3XlljSdM5w2BMXVQacR6ud7OE2A",
+      "category": "Company Profile",
+      "description": "OpenSea company profile and funding data"
+    },
+    {
+      "name": "ConsenSys - Tracxn",
+      "url": "https://tracxn.com/d/companies/consensys/__maB_gtCd07ejpTWqrMruZLA42WjhJlnDK7rf1W5Gjyk",
+      "category": "Company Profile",
+      "description": "ConsenSys company profile"
+    },
+    {
+      "name": "ConsenSys",
+      "url": "https://consensys.io/",
+      "category": "Ethereum Infrastructure",
+      "description": "Ethereum software company"
+    },
+    {
+      "name": "Roblox - Tracxn",
+      "url": "https://tracxn.com/d/companies/roblox/__6IRfwfYHtz2AL4TLbW4qWa0Oxbmmoq1iyy67xb_QPOM",
+      "category": "Company Profile",
+      "description": "Roblox company profile"
+    },
+    {
+      "name": "Roblox",
+      "url": "https://www.roblox.com/",
+      "category": "Gaming Platform",
+      "description": "Online gaming platform with virtual economy"
+    },
+    {
+      "name": "Coinbase - Tracxn",
+      "url": "https://tracxn.com/d/companies/coinbase/__UBOm97V7elrv55WVxtnqqfsOw--lUCPU1fAwOfji14c",
+      "category": "Company Profile",
+      "description": "Coinbase company profile"
+    },
+    {
+      "name": "Coinbase",
+      "url": "https://www.coinbase.com/",
+      "category": "Cryptocurrency Exchange",
+      "description": "Leading cryptocurrency exchange platform"
+    }
+  ],
+  "additional_web3_sites": [
+    {
+      "name": "Solana",
+      "url": "https://solana.com/",
+      "category": "Blockchain Platform",
+      "description": "High-performance blockchain platform"
+    },
+    {
+      "name": "Polygon",
+      "url": "https://polygon.technology/",
+      "category": "Layer 2 Solution",
+      "description": "Ethereum scaling and infrastructure"
+    },
+    {
+      "name": "Uniswap",
+      "url": "https://uniswap.org/",
+      "category": "DeFi Exchange",
+      "description": "Decentralized exchange protocol"
+    },
+    {
+      "name": "Aave",
+      "url": "https://aave.com/",
+      "category": "DeFi Lending",
+      "description": "Decentralized lending protocol"
+    },
+    {
+      "name": "The Graph",
+      "url": "https://thegraph.com/",
+      "category": "Indexing Protocol",
+      "description": "Decentralized indexing protocol for blockchain data"
+    },
+    {
+      "name": "1inch",
+      "url": "https://1inch.io/",
+      "category": "DeFi Aggregator",
+      "description": "DEX aggregator and liquidity protocol"
+    },
+    {
+      "name": "Circle",
+      "url": "https://www.circle.com/",
+      "category": "Stablecoin",
+      "description": "USDC stablecoin and payment infrastructure"
+    },
+    {
+      "name": "Anchorage Digital",
+      "url": "https://www.anchorage.com/",
+      "category": "Crypto Custody",
+      "description": "Digital asset custody and infrastructure"
+    },
+    {
+      "name": "Phantom",
+      "url": "https://phantom.app/",
+      "category": "Crypto Wallet",
+      "description": "Solana and multi-chain crypto wallet"
+    },
+    {
+      "name": "Exodus",
+      "url": "https://www.exodus.com/",
+      "category": "Crypto Wallet",
+      "description": "Multi-asset crypto wallet"
+    }
+  ],
+  "extraction_schemas": {
+    "default": {
+      "company_name": "string",
+      "description": "string",
+      "funding_amount": "string",
+      "team_size": "string",
+      "website": "string",
+      "category": "string",
+      "stage": "string",
+      "location": "string",
+      "founded_year": "string",
+      "investors": "string"
+    },
+    "tracxn_profile": {
+      "company_name": "string",
+      "description": "string",
+      "total_funding": "string",
+      "latest_funding_round": "string",
+      "funding_stage": "string",
+      "investors": "string",
+      "founded_year": "string",
+      "headquarters": "string",
+      "employee_count": "string",
+      "website": "string",
+      "industry": "string",
+      "sub_industry": "string"
+    },
+    "company_website": {
+      "company_name": "string",
+      "mission_statement": "string",
+      "products_services": "string",
+      "team_info": "string",
+      "contact_info": "string",
+      "recent_news": "string",
+      "partnerships": "string",
+      "technology_stack": "string"
+    }
+  }
+}

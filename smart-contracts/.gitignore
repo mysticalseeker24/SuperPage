@@ -4,18 +4,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables
-.env
+# Environment variables (keep main .env for deployment)
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# HardHat files
+# HardHat files (keep artifacts for deployment)
 cache/
-artifacts/
-typechain/
-typechain-types/
+# artifacts/
+# typechain/
+# typechain-types/
 
 # Coverage reports
 coverage/
@@ -25,9 +24,9 @@ coverage.json
 # Gas reports
 gas-report.txt
 
-# Deployment artifacts
-deployments/
-deployment-*.json
+# Deployment artifacts (keep deployment info for production)
+# deployments/
+# deployment-*.json
 
 # IDE files
 .vscode/
@@ -54,9 +53,9 @@ tmp/
 temp/
 .tmp/
 
-# Build outputs
-dist/
-build/
+# Build outputs (keep for deployment)
+# dist/
+# build/
 
 # Solidity flattened files
 flattened/
