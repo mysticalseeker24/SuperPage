@@ -1,7 +1,7 @@
 # SuperPage Blockchain Service Dockerfile
 # Multi-stage build for Python FastAPI service with Node.js HardHat integration
 
-FROM node:18-slim as node-base
+FROM node:18-slim AS node-base
 
 # Set working directory
 WORKDIR /app
@@ -18,7 +18,7 @@ COPY contracts/ ./contracts/
 # Compile contracts (optional, for validation)
 RUN npx hardhat compile || echo "Contract compilation skipped"
 
-FROM python:3.9-slim as python-base
+FROM python:3.9-slim AS python-base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -43,9 +43,9 @@ WORKDIR /app
 # Copy Python requirements
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install Python dependencies with optimizations
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install --no-cache-dir --compile -r requirements.txt
 
 # Copy Node.js files from node-base stage
 COPY --from=node-base /app/node_modules ./node_modules
@@ -77,7 +77,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003"]
 
 # Development variant with hot reload
-FROM python-base as development
+FROM python-base AS development
 
 USER root
 RUN pip install watchdog
@@ -86,7 +86,7 @@ USER app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003", "--reload"]
 
 # Production variant with optimizations
-FROM python-base as production
+FROM python-base AS production
 
 # Install gunicorn for production
 USER root

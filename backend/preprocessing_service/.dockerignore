@@ -1,0 +1,56 @@
+# Reduce Docker build context for faster builds
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Tests
+tests/
+*_test.py
+test_*.py
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Development files
+.env.local
+.env.development
+docker-compose*.yml
+
+# Large data files
+data/
+datasets/
+*.csv
+# Keep important JSON configs
+*.parquet

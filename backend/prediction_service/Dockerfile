@@ -1,7 +1,7 @@
 # SuperPage Prediction Service Dockerfile
 # Production-ready container for model serving with SHAP explanations
 
-FROM python:3.9-slim as base
+FROM python:3.9-slim AS base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -22,9 +22,9 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install Python dependencies with optimizations
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install --no-cache-dir --compile -r requirements.txt
 
 # Copy application code
 COPY main.py .
@@ -32,7 +32,7 @@ COPY model_loader.py .
 
 # Create models directory and copy trained models
 RUN mkdir -p models/latest
-COPY models/latest/ models/latest/ 2>/dev/null || echo "No models directory found - will be mounted at runtime"
+RUN echo "Models directory created - will be mounted at runtime via Docker volume"
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app && \
@@ -50,7 +50,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
 
 # Development variant with hot reload
-FROM base as development
+FROM base AS development
 
 USER root
 RUN pip install watchdog
@@ -59,7 +59,7 @@ USER app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
 
 # Production variant with optimizations
-FROM base as production
+FROM base AS production
 
 # Copy optimized configuration
 ENV WORKERS=4

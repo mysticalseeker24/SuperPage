@@ -2,7 +2,7 @@
 # Multi-stage build supporting both CUDA and CPU environments
 
 ARG BASE_IMAGE=python:3.9-slim
-FROM ${BASE_IMAGE} as base
+FROM ${BASE_IMAGE} AS base
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -23,9 +23,10 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies
+# Install Python dependencies with optimizations (CPU PyTorch for faster builds)
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir --compile -r requirements.txt
 
 # Copy application code
 COPY train_federated.py .
@@ -50,7 +51,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 CMD ["python", "train_federated.py", "--rounds", "3", "--lr", "0.001", "--batch-size", "32"]
 
 # CUDA variant
-FROM nvidia/cuda:11.7-runtime-ubuntu20.04 as cuda
+FROM nvidia/cuda:11.7-runtime-ubuntu20.04 AS cuda
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -79,10 +80,10 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies with CUDA support
+# Install Python dependencies with CUDA support and optimizations
 RUN pip3 install --upgrade pip && \
-    pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu117 && \
-    pip3 install -r requirements.txt
+    pip3 install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cu117 && \
+    pip3 install --no-cache-dir --compile -r requirements.txt
 
 # Copy application code
 COPY train_federated.py .

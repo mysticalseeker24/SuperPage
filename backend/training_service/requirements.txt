@@ -4,7 +4,7 @@
 # Federated Learning
 flwr>=1.6.0,<2.0.0
 
-# Deep Learning
+# Deep Learning (CPU-only for faster builds)
 torch>=2.0.0,<3.0.0
 
 # Data Processing and ML
