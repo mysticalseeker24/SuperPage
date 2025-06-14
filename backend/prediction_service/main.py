@@ -62,6 +62,7 @@ logger = structlog.get_logger(__name__)
 MODEL_PATH = os.getenv("MODEL_PATH", "/app/models/latest/fundraising_model.pth")
 SCALER_PATH = os.getenv("SCALER_PATH", "/app/models/latest/scaler.pkl")
 SHAP_BACKGROUND_SAMPLES = int(os.getenv("SHAP_BACKGROUND_SAMPLES", "100"))
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Global SHAP explainer
 shap_explainer: Optional[shap.Explainer] = None
@@ -183,12 +184,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add CORS middleware
+# Add CORS middleware with frontend URL configuration
+allowed_origins = [
+    FRONTEND_URL,
+    "http://localhost:3000",  # Local development
+    "https://superpage-frontend.netlify.app",  # Production frontend
+    "https://*.netlify.app",  # Netlify preview deployments
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -324,11 +332,12 @@ def compute_shap_explanations(features: List[float], model_manager: ModelManager
 # API Endpoints
 @app.get("/health", response_model=HealthResponse)
 async def health_check(model_manager: ModelManager = Depends(get_model_manager)) -> HealthResponse:
-    """Health check endpoint"""
+    """Health check endpoint - returns standard health status"""
     model_info = model_manager.get_model_info()
-    
+    is_healthy = model_manager.is_loaded()
+
     return HealthResponse(
-        status="healthy" if model_manager.is_loaded() else "unhealthy",
+        status="ok" if is_healthy else "degraded",
         model_loaded=model_manager.is_loaded(),
         model_info=model_info
     )

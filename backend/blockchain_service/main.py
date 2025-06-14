@@ -68,6 +68,7 @@ HARDHAT_PROJECT_PATH = os.getenv("HARDHAT_PROJECT_PATH", os.path.dirname(os.path
 GAS_LIMIT = int(os.getenv("GAS_LIMIT", "500000"))
 GAS_PRICE = os.getenv("GAS_PRICE", "20000000000")  # 20 gwei
 PREDICTION_SERVICE_URL = os.getenv("PREDICTION_SERVICE_URL", "http://localhost:8002")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Validate required environment variables
 if not PRIVATE_KEY:
@@ -178,12 +179,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add CORS middleware
+# Add CORS middleware with frontend URL configuration
+allowed_origins = [
+    FRONTEND_URL,
+    "http://localhost:3000",  # Local development
+    "https://superpage-frontend.netlify.app",  # Production frontend
+    "https://*.netlify.app",  # Netlify preview deployments
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -643,12 +651,15 @@ async def get_transaction_status(tx_hash: str) -> Dict[str, Any]:
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check() -> HealthResponse:
-    """Health check endpoint"""
+    """Health check endpoint - returns standard health status"""
     blockchain_connected = await blockchain_manager.check_blockchain_connection()
     hardhat_available = await blockchain_manager.check_hardhat_availability()
-    
+
+    # Check if all critical dependencies are available
+    is_healthy = blockchain_connected and hardhat_available and bool(CONTRACT_ADDRESS) and bool(PRIVATE_KEY)
+
     return HealthResponse(
-        status="healthy" if blockchain_connected and hardhat_available else "degraded",
+        status="ok" if is_healthy else "degraded",
         blockchain_connected=blockchain_connected,
         contract_address=CONTRACT_ADDRESS,
         network_url=NETWORK_URL,

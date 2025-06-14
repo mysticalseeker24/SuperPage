@@ -72,6 +72,7 @@ EXPOSE 8003
 # Environment variables for configuration
 ENV HARDHAT_PROJECT_PATH=/app
 ENV BLOCKCHAIN_NETWORK_URL=http://localhost:8545
+ENV FRONTEND_URL="http://localhost:3000"
 
 # Health check (use PORT env var for flexibility)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \

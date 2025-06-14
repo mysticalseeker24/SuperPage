@@ -7,7 +7,8 @@ WORKDIR /app
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app
+    PYTHONPATH=/app \
+    FRONTEND_URL="http://localhost:3000"
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \

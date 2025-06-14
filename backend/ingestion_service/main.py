@@ -83,12 +83,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add CORS middleware
+# Add CORS middleware with frontend URL configuration
+allowed_origins = [
+    FRONTEND_URL,
+    "http://localhost:3000",  # Local development
+    "https://superpage-frontend.netlify.app",  # Production frontend
+    "https://*.netlify.app",  # Netlify preview deployments
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -96,6 +103,7 @@ app.add_middleware(
 FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY", "")
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "superpage")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Load Web3 sites configuration from JSON file
 def load_web3_config():
@@ -415,25 +423,35 @@ async def ingest_data(
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """Health check endpoint - returns standard health status"""
     try:
+        # Check critical dependencies
+        is_healthy = (
+            bool(FIRECRAWL_API_KEY) and
+            bool(firecrawl_client) and
+            bool(WEB3_STARTUP_SITES)
+        )
+
         return {
-            "status": "healthy",
+            "status": "ok" if is_healthy else "degraded",
             "service": "ingestion-service",
             "version": "1.0.0",
-            "firecrawl_configured": bool(FIRECRAWL_API_KEY),
-            "firecrawl_api_key_preview": FIRECRAWL_API_KEY[:10] + "..." if FIRECRAWL_API_KEY else "None",
-            "mongodb_connected": database is not None,
-            "web3_sites_count": len(WEB3_STARTUP_SITES),
-            "web3_sites_configured": bool(WEB3_STARTUP_SITES),
-            "firecrawl_client_initialized": bool(firecrawl_client)
+            "timestamp": datetime.utcnow().isoformat(),
+            "dependencies": {
+                "firecrawl_configured": bool(FIRECRAWL_API_KEY),
+                "firecrawl_client_initialized": bool(firecrawl_client),
+                "mongodb_connected": database is not None,
+                "web3_sites_configured": bool(WEB3_STARTUP_SITES),
+                "web3_sites_count": len(WEB3_STARTUP_SITES)
+            }
         }
     except Exception as e:
         print(f"❌ Health check error: {e}")
         return {
             "status": "error",
             "service": "ingestion-service",
-            "error": str(e)
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
         }
 
 

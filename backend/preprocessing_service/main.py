@@ -94,12 +94,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add CORS middleware
+# Add CORS middleware with frontend URL configuration
+allowed_origins = [
+    FRONTEND_URL,
+    "http://localhost:3000",  # Local development
+    "https://superpage-frontend.netlify.app",  # Production frontend
+    "https://*.netlify.app",  # Netlify preview deployments
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -107,6 +114,7 @@ app.add_middleware(
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "superpage")
 TOKENIZER_MODEL = os.getenv("TOKENIZER_MODEL", "distilbert-base-uncased")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Global variables
 mongo_client: Optional[AsyncIOMotorClient] = None
@@ -480,16 +488,19 @@ async def get_project_features(
 
 @app.get("/health", response_model=HealthResponse)
 async def health_check() -> HealthResponse:
-    """Health check endpoint"""
+    """Health check endpoint - returns standard health status"""
     dependencies = {
         "mongodb": database is not None,
         "tokenizer": tokenizer is not None,
         "scaler": scaler is not None,
         "vectorizer": text_vectorizer is not None
     }
-    
+
+    # Check if all critical dependencies are available
+    is_healthy = all(dependencies.values())
+
     return HealthResponse(
-        status="healthy",
+        status="ok" if is_healthy else "degraded",
         service="preprocessing-service",
         version="1.0.0",
         dependencies=dependencies
