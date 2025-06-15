@@ -2,12 +2,12 @@
 # React/Vite application deployment configuration
 
 [build]
-  # Build command for Vite React app
-  command = "npm run build"
-  
+  # Build command for Vite React app (install all dependencies including dev)
+  command = "npm ci && npm run build"
+
   # Directory to publish (Vite default output)
   publish = "dist"
-  
+
   # Base directory for build (frontend folder)
   base = "frontend"
 
@@ -21,11 +21,14 @@
   # Production environment
   NODE_ENV = "production"
   
-  # Vite environment variables
-  VITE_API_URL = "https://superpage-ingestion.onrender.com"
-  VITE_PREDICTION_API_URL = "https://superpage-prediction.onrender.com"
-  VITE_BLOCKCHAIN_API_URL = "https://superpage-blockchain.onrender.com"
-  VITE_PREPROCESSING_API_URL = "https://superpage-preprocessing.onrender.com"
+  # Vite environment variables (Railway URLs)
+  VITE_API_URL = "https://superpage-ingestion.up.railway.app"
+  VITE_PREDICTION_API_URL = "https://superpage-prediction.up.railway.app"
+  VITE_BLOCKCHAIN_API_URL = "https://superpage-blockchain.up.railway.app"
+  VITE_PREPROCESSING_API_URL = "https://superpage-preprocessing.up.railway.app"
+  VITE_BLOCKCHAIN_NETWORK_URL = "https://sepolia.infura.io/v3/ea1e0f21469f412995bdaaa76ac1c266"
+  VITE_SUPERPAGE_CONTRACT_ADDRESS = "0x45341d82d59b3C4C43101782d97a4dBb97a42dba"
+  VITE_INFURA_PROJECT_ID = "ea1e0f21469f412995bdaaa76ac1c266"
 
 # Redirect rules for Single Page Application (SPA)
 # All routes should serve index.html for client-side routing
@@ -38,25 +41,25 @@
 # API proxy redirects (optional - for development)
 [[redirects]]
   from = "/api/ingestion/*"
-  to = "https://superpage-ingestion.onrender.com/:splat"
+  to = "https://superpage-ingestion.up.railway.app/:splat"
   status = 200
   force = false
 
 [[redirects]]
   from = "/api/prediction/*"
-  to = "https://superpage-prediction.onrender.com/:splat"
+  to = "https://superpage-prediction.up.railway.app/:splat"
   status = 200
   force = false
 
 [[redirects]]
   from = "/api/blockchain/*"
-  to = "https://superpage-blockchain.onrender.com/:splat"
+  to = "https://superpage-blockchain.up.railway.app/:splat"
   status = 200
   force = false
 
 [[redirects]]
   from = "/api/preprocessing/*"
-  to = "https://superpage-preprocessing.onrender.com/:splat"
+  to = "https://superpage-preprocessing.up.railway.app/:splat"
   status = 200
   force = false
 

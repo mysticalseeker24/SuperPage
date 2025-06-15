@@ -24,7 +24,7 @@ Since your Railway backend is already deployed, now let's deploy the React front
 frontend
 
 # Build command
-npm run build
+npm ci && npm run build
 
 # Publish directory
 frontend/dist
@@ -32,6 +32,8 @@ frontend/dist
 # Node.js version
 18.19.0
 ```
+
+**Note**: The build command `npm ci && npm run build` ensures all dependencies (including devDependencies) are installed before building.
 
 ### **Step 3: Environment Variables**
 
@@ -97,12 +99,18 @@ Netlify will automatically detect the `netlify.toml` file in your repository:
 
 ## 🔧 Build Configuration
 
-### **Package.json Scripts**
+### **Package.json Dependencies**
 
-Ensure your `frontend/package.json` has the correct build script:
+Ensure Vite is in dependencies (not devDependencies) for Netlify builds:
 
 ```json
 {
+  "dependencies": {
+    "vite": "^5.0.8",
+    "@vitejs/plugin-react": "^4.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -111,6 +119,8 @@ Ensure your `frontend/package.json` has the correct build script:
   }
 }
 ```
+
+**Important**: Vite must be in `dependencies` (not `devDependencies`) for Netlify to find it during build.
 
 ### **Vite Configuration**
 
@@ -179,10 +189,11 @@ curl https://your-site-name.netlify.app
 
 ### **Common Issues:**
 
-#### **❌ "Build failed"**
+#### **❌ "Build failed" / "vite: not found"**
+- **Fix build command**: Use `npm ci && npm run build` instead of `npm run build`
+- **Move Vite to dependencies**: Ensure `vite` is in `dependencies`, not `devDependencies`
 - **Check Node.js version**: Ensure it's 18.x
-- **Verify build command**: Should be `npm run build`
-- **Check dependencies**: Run `npm install` locally first
+- **Verify package.json**: Run `npm install` locally first to test
 
 #### **❌ "API calls failing"**
 - **Verify environment variables**: Check Railway URLs are correct
