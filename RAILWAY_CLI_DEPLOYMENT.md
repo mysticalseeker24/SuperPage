@@ -42,17 +42,20 @@ railway link [project-id]
 # Navigate to service directory
 cd backend/ingestion_service
 
-# Initialize Railway service
-railway service create superpage-ingestion
+# Create Railway service
+railway add --service superpage-ingestion
+
+# Link to the service
+railway service superpage-ingestion
 
 # Deploy the service
 railway up
 
 # Set environment variables
-railway variables set DATABASE_URL="${{Postgres.DATABASE_URL}}"
-railway variables set FIRECRAWL_API_KEY="fc-62e1fc5b845c40948b28fd133fbef7cf"
-railway variables set FRONTEND_URL="https://superpage-frontend.netlify.app"
-railway variables set PORT="8000"
+railway variables --set "DATABASE_URL=\${{Postgres.DATABASE_URL}}"
+railway variables --set "FIRECRAWL_API_KEY=fc-62e1fc5b845c40948b28fd133fbef7cf"
+railway variables --set "FRONTEND_URL=https://superpage-frontend.netlify.app"
+railway variables --set "PORT=8000"
 ```
 
 #### **Deploy Preprocessing Service:**
@@ -61,16 +64,19 @@ railway variables set PORT="8000"
 cd ../preprocessing_service
 
 # Create new service
-railway service create superpage-preprocessing
+railway add --service superpage-preprocessing
+
+# Link to the service
+railway service superpage-preprocessing
 
 # Deploy
 railway up
 
 # Set environment variables
-railway variables set DATABASE_URL="${{Postgres.DATABASE_URL}}"
-railway variables set FIRECRAWL_API_KEY="fc-62e1fc5b845c40948b28fd133fbef7cf"
-railway variables set FRONTEND_URL="https://superpage-frontend.netlify.app"
-railway variables set PORT="8000"
+railway variables --set "DATABASE_URL=\${{Postgres.DATABASE_URL}}"
+railway variables --set "FIRECRAWL_API_KEY=fc-62e1fc5b845c40948b28fd133fbef7cf"
+railway variables --set "FRONTEND_URL=https://superpage-frontend.netlify.app"
+railway variables --set "PORT=8000"
 ```
 
 #### **Deploy Prediction Service:**
@@ -79,15 +85,18 @@ railway variables set PORT="8000"
 cd ../prediction_service
 
 # Create new service
-railway service create superpage-prediction
+railway add --service superpage-prediction
+
+# Link to the service
+railway service superpage-prediction
 
 # Deploy
 railway up
 
 # Set environment variables
-railway variables set DATABASE_URL="${{Postgres.DATABASE_URL}}"
-railway variables set FRONTEND_URL="https://superpage-frontend.netlify.app"
-railway variables set PORT="8000"
+railway variables --set "DATABASE_URL=\${{Postgres.DATABASE_URL}}"
+railway variables --set "FRONTEND_URL=https://superpage-frontend.netlify.app"
+railway variables --set "PORT=8000"
 ```
 
 #### **Deploy Blockchain Service:**
@@ -96,20 +105,23 @@ railway variables set PORT="8000"
 cd ../blockchain_service
 
 # Create new service
-railway service create superpage-blockchain
+railway add --service superpage-blockchain
+
+# Link to the service
+railway service superpage-blockchain
 
 # Deploy
 railway up
 
 # Set environment variables
-railway variables set DATABASE_URL="${{Postgres.DATABASE_URL}}"
-railway variables set BLOCKCHAIN_PRIVATE_KEY="a8a6f100ed77edf366914903d669367174436ad272085a414f0a11033d04936e"
-railway variables set BLOCKCHAIN_NETWORK_URL="https://sepolia.infura.io/v3/ea1e0f21469f412995bdaaa76ac1c266"
-railway variables set SUPERPAGE_CONTRACT_ADDRESS="0x45341d82d59b3C4C43101782d97a4dBb97a42dba"
-railway variables set INFURA_PROJECT_ID="ea1e0f21469f412995bdaaa76ac1c266"
-railway variables set ETHERSCAN_API_KEY="PEK4R6W3IDZGATUF3JDU7KTGBCGWM6UJRA"
-railway variables set FRONTEND_URL="https://superpage-frontend.netlify.app"
-railway variables set PORT="8000"
+railway variables --set "DATABASE_URL=\${{Postgres.DATABASE_URL}}"
+railway variables --set "BLOCKCHAIN_PRIVATE_KEY=a8a6f100ed77edf366914903d669367174436ad272085a414f0a11033d04936e"
+railway variables --set "BLOCKCHAIN_NETWORK_URL=https://sepolia.infura.io/v3/ea1e0f21469f412995bdaaa76ac1c266"
+railway variables --set "SUPERPAGE_CONTRACT_ADDRESS=0x45341d82d59b3C4C43101782d97a4dBb97a42dba"
+railway variables --set "INFURA_PROJECT_ID=ea1e0f21469f412995bdaaa76ac1c266"
+railway variables --set "ETHERSCAN_API_KEY=PEK4R6W3IDZGATUF3JDU7KTGBCGWM6UJRA"
+railway variables --set "FRONTEND_URL=https://superpage-frontend.netlify.app"
+railway variables --set "PORT=8000"
 ```
 
 ### **Step 5: Add PostgreSQL Database**

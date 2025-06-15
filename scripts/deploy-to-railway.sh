@@ -56,31 +56,34 @@ for service in "${services[@]}"; do
     # Create service if it doesn't exist
     service_name="superpage-$service"
     echo "Creating Railway service: $service_name"
-    railway service create "$service_name" || echo "Service may already exist"
-    
+    railway add --service "$service_name" || echo "Service may already exist"
+
+    # Link to the service
+    railway service "$service_name"
+
     # Deploy the service
     echo "Deploying $service_name..."
-    railway up --service "$service_name"
+    railway up
     
     # Set environment variables
     echo "Setting environment variables for $service_name..."
-    
+
     # Common environment variables for all services
-    railway variables set DATABASE_URL="\${{Postgres.DATABASE_URL}}" --service "$service_name"
-    railway variables set FRONTEND_URL="https://superpage-frontend.netlify.app" --service "$service_name"
-    railway variables set PORT="8000" --service "$service_name"
+    railway variables --set "DATABASE_URL=\${{Postgres.DATABASE_URL}}"
+    railway variables --set "FRONTEND_URL=https://superpage-frontend.netlify.app"
+    railway variables --set "PORT=8000"
     
     # Service-specific environment variables
     case "$service" in
         "ingestion"|"preprocessing")
-            railway variables set FIRECRAWL_API_KEY="fc-62e1fc5b845c40948b28fd133fbef7cf" --service "$service_name"
+            railway variables --set "FIRECRAWL_API_KEY=fc-62e1fc5b845c40948b28fd133fbef7cf"
             ;;
         "blockchain")
-            railway variables set BLOCKCHAIN_PRIVATE_KEY="a8a6f100ed77edf366914903d669367174436ad272085a414f0a11033d04936e" --service "$service_name"
-            railway variables set BLOCKCHAIN_NETWORK_URL="https://sepolia.infura.io/v3/ea1e0f21469f412995bdaaa76ac1c266" --service "$service_name"
-            railway variables set SUPERPAGE_CONTRACT_ADDRESS="0x45341d82d59b3C4C43101782d97a4dBb97a42dba" --service "$service_name"
-            railway variables set INFURA_PROJECT_ID="ea1e0f21469f412995bdaaa76ac1c266" --service "$service_name"
-            railway variables set ETHERSCAN_API_KEY="PEK4R6W3IDZGATUF3JDU7KTGBCGWM6UJRA" --service "$service_name"
+            railway variables --set "BLOCKCHAIN_PRIVATE_KEY=a8a6f100ed77edf366914903d669367174436ad272085a414f0a11033d04936e"
+            railway variables --set "BLOCKCHAIN_NETWORK_URL=https://sepolia.infura.io/v3/ea1e0f21469f412995bdaaa76ac1c266"
+            railway variables --set "SUPERPAGE_CONTRACT_ADDRESS=0x45341d82d59b3C4C43101782d97a4dBb97a42dba"
+            railway variables --set "INFURA_PROJECT_ID=ea1e0f21469f412995bdaaa76ac1c266"
+            railway variables --set "ETHERSCAN_API_KEY=PEK4R6W3IDZGATUF3JDU7KTGBCGWM6UJRA"
             ;;
     esac
     

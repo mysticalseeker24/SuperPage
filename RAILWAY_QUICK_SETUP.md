@@ -47,22 +47,26 @@ railway add postgresql
 ```bash
 # Deploy Ingestion Service
 cd backend/ingestion_service
-railway service create superpage-ingestion
+railway add --service superpage-ingestion
+railway service superpage-ingestion
 railway up
 
 # Deploy Preprocessing Service
 cd ../preprocessing_service
-railway service create superpage-preprocessing
+railway add --service superpage-preprocessing
+railway service superpage-preprocessing
 railway up
 
 # Deploy Prediction Service
 cd ../prediction_service
-railway service create superpage-prediction
+railway add --service superpage-prediction
+railway service superpage-prediction
 railway up
 
 # Deploy Blockchain Service
 cd ../blockchain_service
-railway service create superpage-blockchain
+railway add --service superpage-blockchain
+railway service superpage-blockchain
 railway up
 ```
 
