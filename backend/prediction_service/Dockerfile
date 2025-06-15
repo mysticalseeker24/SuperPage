@@ -20,8 +20,8 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Copy production requirements first for better caching
+COPY requirements-prod.txt requirements.txt
 
 # Install Python dependencies with optimizations
 RUN pip install --upgrade pip && \

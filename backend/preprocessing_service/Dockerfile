@@ -1,4 +1,23 @@
-# Use Python 3.9 slim image for smaller footprint
+# Multi-stage build for smaller production image
+FROM python:3.9-slim as builder
+
+# Set working directory
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy production requirements
+COPY requirements-prod.txt requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir --user -r requirements.txt
+
+# Production stage
 FROM python:3.9-slim
 
 # Set working directory
@@ -8,22 +27,16 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app \
+    PATH=/root/.local/bin:$PATH \
     FRONTEND_URL="http://localhost:3000"
 
-# Install system dependencies
+# Install only runtime dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
     curl \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-
-# Install Python dependencies with optimizations
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir --compile -r requirements.txt
+# Copy installed packages from builder
+COPY --from=builder /root/.local /root/.local
 
 # Copy application code
 COPY . .
