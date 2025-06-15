@@ -144,10 +144,14 @@ railway variables --set "PORT=8000"
 railway status
 
 # Check specific service logs
-railway logs --service superpage-ingestion
+railway logs
 
-# View environment variables
-railway variables --service superpage-ingestion
+# View environment variables (for current linked service)
+railway variables
+
+# View variables for specific service
+railway service [service-name]
+railway variables
 ```
 
 ### **Test Health Endpoints:**

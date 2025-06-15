@@ -99,16 +99,13 @@ echo -e "${BLUE}Setting up database schema...${NC}"
 read -p "Do you want to set up the database schema now? (y/n): " setup_schema
 
 if [[ $setup_schema == "y" || $setup_schema == "Y" ]]; then
-    # Get database URL
-    db_url=$(railway variables get DATABASE_URL --service postgres 2>/dev/null || echo "")
-    
-    if [[ -n "$db_url" ]]; then
-        echo "Setting up database schema..."
-        psql "$db_url" -f scripts/setup-postgres-schema.sql || echo -e "${YELLOW}⚠️  Schema setup failed. You can run it manually later.${NC}"
-        echo -e "${GREEN}✅ Database schema setup complete${NC}"
-    else
-        echo -e "${YELLOW}⚠️  Could not get database URL. Set up schema manually.${NC}"
-    fi
+    echo -e "${YELLOW}⚠️  To get the database URL:${NC}"
+    echo "1. Run: railway service postgres"
+    echo "2. Run: railway variables"
+    echo "3. Copy the DATABASE_URL value"
+    echo "4. Run: psql [DATABASE_URL] -f scripts/setup-postgres-schema.sql"
+    echo ""
+    echo -e "${BLUE}Or set up schema later from Railway dashboard → PostgreSQL → Data tab${NC}"
 fi
 
 # Display deployment status
