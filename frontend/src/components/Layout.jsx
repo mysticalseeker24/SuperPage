@@ -181,7 +181,7 @@ const Layout = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false)
 
   const location = useLocation()
-  const { account, isConnecting, connectWallet, isMetaMaskInstalled } = useWallet()
+  const { account } = useWallet()
 
   // Handle responsive design
   useEffect(() => {

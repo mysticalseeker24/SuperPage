@@ -164,7 +164,7 @@ const WalletConnect = () => {
         className="mt-6 text-center"
       >
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          This app works on Sepolia testnet. You'll be prompted to switch networks after connecting.
+          This app works on Sepolia testnet. You&apos;ll be prompted to switch networks after connecting.
         </p>
       </motion.div>
     </div>

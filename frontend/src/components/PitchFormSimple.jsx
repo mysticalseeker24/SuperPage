@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
@@ -101,7 +101,7 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
           fontSize: '18px',
           lineHeight: '1.6',
         }}>
-          Get AI-powered insights into your startup's fundraising potential.
+          Get AI-powered insights into your startup&apos;s fundraising potential.
         </p>
       </div>
 

@@ -1,14 +1,13 @@
 import React, { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import { FixedSizeList as List } from 'react-window'
-import { 
-  Search, 
-  Filter, 
-  TrendingUp, 
-  TrendingDown, 
-  Eye, 
-  Calendar,
+import {
+  Search,
+  Filter,
+  TrendingUp,
+  TrendingDown,
+  Eye,
   Users,
   DollarSign,
   BarChart3,

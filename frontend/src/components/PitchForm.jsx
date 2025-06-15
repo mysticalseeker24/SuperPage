@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
-import { Send, Loader2, AlertCircle } from 'lucide-react'
+import { Send, Loader2, AlertCircle, Users, Link as LinkIcon, Info, TrendingUp, DollarSign } from 'lucide-react'
 import { predictionService, convertPitchToFeatures } from '../services/api'
 
 const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
@@ -107,7 +107,7 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
           fontSize: '18px',
           lineHeight: '1.6',
         }}>
-          Get AI-powered insights into your startup's fundraising potential using our federated learning model.
+          Get AI-powered insights into your startup&apos;s fundraising potential using our federated learning model.
         </p>
       </motion.div>
 

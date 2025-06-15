@@ -1,0 +1,82 @@
+# Railway-optimized Dockerfile for SuperPage Blockchain Service
+# Lightweight build with Node.js and Python
+
+FROM node:18-slim AS node-stage
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install only production dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy HardHat files
+COPY hardhat.config.js ./
+COPY scripts/ ./scripts/
+COPY contracts/ ./contracts/
+
+# Compile contracts
+RUN npx hardhat compile || echo "Contract compilation skipped"
+
+# Python stage
+FROM python:3.9-slim
+
+# Set environment variables for Railway
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PORT=8000
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Install Node.js (minimal)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy Python requirements
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    find /usr/local -name "*.pyc" -delete && \
+    find /usr/local -name "__pycache__" -type d -exec rm -rf {} + || true
+
+# Copy Node.js files from node stage
+COPY --from=node-stage /app/node_modules ./node_modules
+COPY --from=node-stage /app/package.json ./package.json
+COPY --from=node-stage /app/hardhat.config.js ./hardhat.config.js
+COPY --from=node-stage /app/scripts ./scripts
+COPY --from=node-stage /app/contracts ./contracts
+
+# Copy Python application
+COPY main.py .
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash app && \
+    chown -R app:app /app
+USER app
+
+# Expose Railway port
+EXPOSE $PORT
+
+# Environment variables
+ENV HARDHAT_PROJECT_PATH=/app
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:$PORT/health || exit 1
+
+# Run with Railway's PORT environment variable
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT

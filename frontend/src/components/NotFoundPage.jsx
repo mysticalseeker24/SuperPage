@@ -187,8 +187,8 @@ const NotFoundPage = () => {
           ...(isDark ? styles.descriptionDark : {})
         }}
       >
-        Oops! The page you're looking for doesn't exist. It might have been moved, deleted, 
-        or you entered the wrong URL. Let's get you back on track.
+        Oops! The page you&apos;re looking for doesn&apos;t exist. It might have been moved, deleted,
+        or you entered the wrong URL. Let&apos;s get you back on track.
       </motion.p>
 
       {/* Action Buttons */}

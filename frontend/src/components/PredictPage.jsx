@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useWallet } from '../hooks/useWallet'
 import PitchForm from './PitchFormSimple'
 import PredictionCard from './PredictionCard'
-import WalletConnect from './WalletConnect'
+
 
 const styles = {
   container: {
@@ -110,7 +110,7 @@ const PredictPage = () => {
                 ...styles.subtitle,
                 ...(isDark ? styles.subtitleDark : {})
               }}>
-                Get instant AI-powered insights into your Web3 project's fundraising potential. 
+                Get instant AI-powered insights into your Web3 project&apos;s fundraising potential.
                 Our advanced machine learning models analyze multiple factors to provide accurate predictions.
               </p>
             </div>

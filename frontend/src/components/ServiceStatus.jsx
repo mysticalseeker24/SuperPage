@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Activity, CheckCircle, AlertCircle, XCircle } from 'lucide-react'
+import { Activity } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { checkAllServicesHealth } from '../services/api'
 
@@ -10,8 +10,7 @@ const ServiceStatus = () => {
   const {
     data: healthData,
     isLoading,
-    error,
-    refetch
+    error
   } = useQuery({
     queryKey: ['serviceHealth'],
     queryFn: checkAllServicesHealth,

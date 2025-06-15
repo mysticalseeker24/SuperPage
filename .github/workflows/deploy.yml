@@ -173,8 +173,9 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        # Remove cache settings that cause issues with docker driver
+        # cache-from: type=gha
+        # cache-to: type=gha,mode=max
 
   # Deploy to Railway
   deploy-railway:

@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useMutation } from '@tanstack/react-query'
-import { 
-  ArrowLeft, 
-  TrendingUp, 
-  TrendingDown, 
-  Share2, 
+import {
+  ArrowLeft,
+  TrendingUp,
+  TrendingDown,
+  Share2,
   Loader2,
   CheckCircle,
   AlertCircle,
   BarChart3,
-  Zap,
   Shield,
   ExternalLink
 } from 'lucide-react'
