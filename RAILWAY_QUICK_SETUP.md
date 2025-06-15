@@ -1,14 +1,17 @@
-# 🚂 Railway Quick Setup Guide
+# 🚂 Railway Backend Deployment Guide
 
-## ⚠️ Important: Railway GitHub Integration Issue
+## ✅ SuperPage Backend on Railway
 
-Railway's GitHub integration automatically detects the **entire repository**, not individual services. This causes deployment failures.
+Deploy all 4 SuperPage microservices to Railway with PostgreSQL database for a complete production backend.
 
-## ✅ Solution: Use Railway CLI
+## 🎯 What You'll Deploy
 
-The most reliable way to deploy SuperPage is using the **Railway CLI** for individual service deployment.
+- **🔧 4 Microservices**: Ingestion, Preprocessing, Prediction, Blockchain
+- **🗄️ PostgreSQL Database**: Railway managed database
+- **🌐 Public URLs**: Each service gets a Railway subdomain
+- **🔄 Auto-deployment**: GitHub integration for continuous deployment
 
-## 🚀 Quick Deployment (Recommended)
+## 🚀 Deployment Options
 
 ### **Option 1: Automated Deployment (Easiest)**
 
@@ -126,10 +129,13 @@ curl https://superpage-blockchain.up.railway.app/health
 
 ## 🎨 Frontend Deployment (Netlify)
 
+After Railway backend is deployed, deploy the frontend:
+
 1. Go to [netlify.com](https://netlify.com)
 2. **New site from Git** → Select SuperPage repo
 3. **Build settings:**
-   - **Build command**: `cd frontend && npm run build`
+   - **Base directory**: `frontend`
+   - **Build command**: `npm run build`
    - **Publish directory**: `frontend/dist`
 4. **Environment variables:**
    ```bash
@@ -137,7 +143,11 @@ curl https://superpage-blockchain.up.railway.app/health
    VITE_PREDICTION_API_URL=https://superpage-prediction.up.railway.app
    VITE_BLOCKCHAIN_API_URL=https://superpage-blockchain.up.railway.app
    VITE_PREPROCESSING_API_URL=https://superpage-preprocessing.up.railway.app
+   VITE_BLOCKCHAIN_NETWORK_URL=https://sepolia.infura.io/v3/ea1e0f21469f412995bdaaa76ac1c266
+   VITE_SUPERPAGE_CONTRACT_ADDRESS=0x45341d82d59b3C4C43101782d97a4dBb97a42dba
    ```
+
+📖 **Detailed Guide**: See `NETLIFY_DEPLOYMENT_GUIDE.md` for complete instructions
 
 ## 🔧 GitHub Actions Setup
 

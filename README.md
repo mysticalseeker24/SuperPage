@@ -162,13 +162,28 @@ All services are pre-configured with production credentials:
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 🌐 **Live Production Deployment**
+
+SuperPage is deployed and ready to use:
+
+- **🎨 Frontend**: [https://superpage-frontend.netlify.app](https://superpage-frontend.netlify.app)
+- **🔗 Backend APIs**:
+  - Ingestion: `https://superpage-ingestion.up.railway.app`
+  - Preprocessing: `https://superpage-preprocessing.up.railway.app`
+  - Prediction: `https://superpage-prediction.up.railway.app`
+  - Blockchain: `https://superpage-blockchain.up.railway.app`
+
+**🔐 Note**: Frontend requires MetaMask wallet connection before access
+
+### 💻 **Local Development**
+
+#### Prerequisites
 - Python 3.9+
 - Node.js 18+ (for smart contracts)
 - Docker & Docker Compose
 - Git
 
-### Option 1: Docker Compose (Recommended)
+#### Option 1: Docker Compose (Recommended)
 
 1. **Clone and start the complete system**
    ```bash
@@ -182,15 +197,12 @@ All services are pre-configured with production credentials:
    ./start-superpage.sh development
    ```
 
-2. **Access services**
-   - **Frontend UI**: http://localhost:3000 (React application with wallet authentication)
+2. **Access local services**
+   - **Frontend UI**: http://localhost:3000
    - **Ingestion API**: http://localhost:8010/docs
    - **Preprocessing API**: http://localhost:8001/docs
    - **Prediction API**: http://localhost:8002/docs
    - **Blockchain API**: http://localhost:8003/docs
-   - **Database UI**: http://localhost:8081 (development)
-
-   **Note**: Frontend requires MetaMask wallet connection before access
 
 ### Option 2: Individual Services
 
@@ -324,9 +336,34 @@ cd backend/prediction_service && pytest -m shap
 cd backend/blockchain_service && pytest -m subprocess
 ```
 
-## 🚀 Deployment
+## 🚀 Production Deployment
 
-### Docker Compose (Recommended)
+### 🚂 **Railway Backend (Current Setup)**
+
+SuperPage backend is deployed on Railway with the following architecture:
+
+- **🗄️ PostgreSQL Database**: Railway managed database
+- **🔧 4 Microservices**: Individual Railway services
+- **🔄 Auto-deployment**: GitHub integration with main branch
+- **📊 Health Monitoring**: All services have `/health` endpoints
+
+#### Service URLs:
+```bash
+# Health check all services
+curl https://superpage-ingestion.up.railway.app/health
+curl https://superpage-preprocessing.up.railway.app/health
+curl https://superpage-prediction.up.railway.app/health
+curl https://superpage-blockchain.up.railway.app/health
+```
+
+### 🎨 **Netlify Frontend (Current Setup)**
+
+- **🌐 URL**: https://superpage-frontend.netlify.app
+- **🔄 Auto-deployment**: GitHub integration with main branch
+- **📱 SPA Routing**: Client-side routing with fallback
+- **🔐 Wallet Authentication**: MetaMask required for access
+
+### 🐳 **Local Docker Development**
 ```bash
 # Development environment
 docker-compose up
