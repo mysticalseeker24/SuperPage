@@ -29,9 +29,10 @@ Railway is a modern deployment platform that offers:
 
 1. Go to [railway.app](https://railway.app)
 2. Sign in with GitHub
-3. **New Project** → **Deploy from GitHub repo**
-4. Select your `SuperPage` repository
-5. **Deploy Now**
+3. **New Project** → **Empty Project**
+4. Name your project: `SuperPage`
+
+**⚠️ Important**: Do NOT deploy the entire repository at once. Railway requires each service to be deployed individually.
 
 ### **2. Add PostgreSQL Database**
 
@@ -42,20 +43,38 @@ Railway is a modern deployment platform that offers:
 
 ### **3. Deploy Backend Services**
 
-Railway will automatically detect each service from the `railway.json` files:
+Deploy each service individually with the correct root directory:
 
-#### **Deploy Each Service:**
-1. **+ New** → **GitHub Repo** → **SuperPage**
-2. **Configure Service:**
+#### **Deploy Ingestion Service:**
+1. In your Railway project: **+ New** → **GitHub Repo**
+2. Select your `SuperPage` repository
+3. **Configure Service:**
    - **Service Name**: `superpage-ingestion`
    - **Root Directory**: `backend/ingestion_service`
    - **Build Command**: Auto-detected from Dockerfile
    - **Start Command**: Auto-detected from Dockerfile
+4. **Deploy**
 
-3. **Repeat for other services:**
-   - `superpage-preprocessing` (root: `backend/preprocessing_service`)
-   - `superpage-prediction` (root: `backend/prediction_service`)  
-   - `superpage-blockchain` (root: `backend/blockchain_service`)
+#### **Deploy Preprocessing Service:**
+1. **+ New** → **GitHub Repo** → **SuperPage**
+2. **Configure Service:**
+   - **Service Name**: `superpage-preprocessing`
+   - **Root Directory**: `backend/preprocessing_service`
+3. **Deploy**
+
+#### **Deploy Prediction Service:**
+1. **+ New** → **GitHub Repo** → **SuperPage**
+2. **Configure Service:**
+   - **Service Name**: `superpage-prediction`
+   - **Root Directory**: `backend/prediction_service`
+3. **Deploy**
+
+#### **Deploy Blockchain Service:**
+1. **+ New** → **GitHub Repo** → **SuperPage**
+2. **Configure Service:**
+   - **Service Name**: `superpage-blockchain`
+   - **Root Directory**: `backend/blockchain_service`
+3. **Deploy**
 
 ### **4. Configure Environment Variables**
 

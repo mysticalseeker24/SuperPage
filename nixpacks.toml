@@ -1,0 +1,23 @@
+# Nixpacks configuration for SuperPage
+# This file tells Railway how to build the project
+
+[variables]
+NIXPACKS_PYTHON_VERSION = "3.9"
+
+[phases.setup]
+nixPkgs = ["python39", "gcc", "pkg-config"]
+
+[phases.install]
+cmds = [
+    "echo 'SuperPage is a multi-service application'",
+    "echo 'Each service should be deployed separately'",
+    "echo 'Please deploy individual services from their respective directories:'",
+    "echo '- backend/ingestion_service'", 
+    "echo '- backend/preprocessing_service'",
+    "echo '- backend/prediction_service'",
+    "echo '- backend/blockchain_service'",
+    "echo 'See RAILWAY_DEPLOYMENT_GUIDE.md for detailed instructions'"
+]
+
+[start]
+cmd = "echo 'This is a multi-service project. Deploy individual services separately.'"
