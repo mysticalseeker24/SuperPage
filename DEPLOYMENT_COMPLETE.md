@@ -1,26 +1,27 @@
-# 🎉 SuperPage Deployment Configuration Complete!
+# 🎉 SuperPage Railway Deployment Configuration Complete!
 
 ## 📋 Summary of Completed Tasks
 
-### ✅ **1.1 Dockerfiles for All Services** 
+### ✅ **1.1 Dockerfiles for All Services**
 **Status: COMPLETE**
 
 All backend services now have production-ready Dockerfiles:
 - **Base Image**: `python:3.9-slim` for all services
-- **Port Flexibility**: Support both local (8010, 8001, 8002, 8003) and Render (8000) ports via `PORT` env var
+- **Port Flexibility**: Support both local (8010, 8001, 8002, 8003) and Railway (8000) ports via `PORT` env var
 - **Health Checks**: All services have `/health` endpoint monitoring
 - **Security**: Non-root users and proper permissions
 - **Environment Variables**: `FRONTEND_URL` added to all services
 
-### ✅ **1.2 Render Infrastructure as Code (render.yaml)**
+### ✅ **1.2 Railway Infrastructure Configuration**
 **Status: COMPLETE**
 
-Complete `render.yaml` configuration with:
+Complete Railway deployment setup with:
 - **4 Microservices**: ingestion, preprocessing, prediction, blockchain
-- **Auto-deploy**: From `main` branch on GitHub
-- **Environment Variables**: Properly configured with sensitive vars marked for manual setup
+- **PostgreSQL Database**: Railway managed database with auto-connection
+- **Auto-deploy**: From `main` branch via GitHub Actions
+- **Environment Variables**: Properly configured with Railway variable management
 - **Health Checks**: Monitoring on `/health` endpoints
-- **Docker Integration**: Proper context and Dockerfile paths
+- **Service Configuration**: Individual `railway.json` for each service
 
 ### ✅ **1.3 Netlify Frontend Configuration (netlify.toml)**
 **Status: COMPLETE**
@@ -41,7 +42,7 @@ Comprehensive CI/CD pipeline (`.github/workflows/deploy.yml`):
 - **Backend Testing**: Pytest and linting for all services
 - **Frontend Testing**: ESLint and build verification
 - **Docker Build**: Multi-service container builds with GHCR push
-- **Render Deployment**: Automated deployment via Render API
+- **Railway Deployment**: Automated deployment via Railway CLI
 - **Netlify Deployment**: Frontend deployment with environment variables
 - **Health Checks**: Post-deployment verification
 - **Coverage**: Codecov integration for test coverage
@@ -61,12 +62,12 @@ All FastAPI services updated with:
 Set these in your GitHub repository settings:
 
 ```bash
-# Render API Configuration
-RENDER_API_KEY=your_render_api_key_here
-RENDER_SERVICE_ID_INGESTION=srv_xxxxx
-RENDER_SERVICE_ID_PREPROCESSING=srv_xxxxx  
-RENDER_SERVICE_ID_PREDICTION=srv_xxxxx
-RENDER_SERVICE_ID_BLOCKCHAIN=srv_xxxxx
+# Railway API Configuration
+RAILWAY_TOKEN=your_railway_token_here
+RAILWAY_INGESTION_SERVICE_ID=service_id_here
+RAILWAY_PREPROCESSING_SERVICE_ID=service_id_here
+RAILWAY_PREDICTION_SERVICE_ID=service_id_here
+RAILWAY_BLOCKCHAIN_SERVICE_ID=service_id_here
 
 # Netlify Configuration
 NETLIFY_AUTH_TOKEN=your_netlify_auth_token

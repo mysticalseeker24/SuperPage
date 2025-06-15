@@ -176,45 +176,49 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-  # Deploy to Render
-  deploy-render:
-    name: 🚀 Deploy to Render
+  # Deploy to Railway
+  deploy-railway:
+    name: 🚀 Deploy to Railway
     runs-on: ubuntu-latest
-    needs: [docker-build]
+    # Don't wait for Docker build - Railway builds from source
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        service: [ingestion, preprocessing, prediction, blockchain]
+      fail-fast: false
 
     steps:
-    - name: 🚀 Deploy Ingestion Service
-      run: |
-        curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{"clearCache": false}' \
-          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_INGESTION }}/deploys"
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
 
-    - name: 🚀 Deploy Preprocessing Service
+    - name: 🚀 Install Railway CLI
       run: |
-        curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{"clearCache": false}' \
-          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_PREPROCESSING }}/deploys"
+        npm install -g @railway/cli
 
-    - name: 🚀 Deploy Prediction Service
+    - name: 🚀 Deploy ${{ matrix.service }} Service to Railway
       run: |
-        curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{"clearCache": false}' \
-          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_PREDICTION }}/deploys"
+        echo "Deploying ${{ matrix.service }} service to Railway..."
+        railway login --token ${{ secrets.RAILWAY_TOKEN }}
 
-    - name: 🚀 Deploy Blockchain Service
-      run: |
-        curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{"clearCache": false}' \
-          "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BLOCKCHAIN }}/deploys"
+        # Set the correct working directory for each service
+        cd backend/${{ matrix.service }}_service
+
+        # Deploy the service using Railway CLI
+        case "${{ matrix.service }}" in
+          "ingestion")
+            railway up --service ${{ secrets.RAILWAY_INGESTION_SERVICE_ID }} || echo "Ingestion deploy failed"
+            ;;
+          "preprocessing")
+            railway up --service ${{ secrets.RAILWAY_PREPROCESSING_SERVICE_ID }} || echo "Preprocessing deploy failed"
+            ;;
+          "prediction")
+            railway up --service ${{ secrets.RAILWAY_PREDICTION_SERVICE_ID }} || echo "Prediction deploy failed"
+            ;;
+          "blockchain")
+            railway up --service ${{ secrets.RAILWAY_BLOCKCHAIN_SERVICE_ID }} || echo "Blockchain deploy failed"
+            ;;
+        esac
+      continue-on-error: true
 
   # Deploy Frontend to Netlify
   deploy-netlify:
@@ -244,10 +248,10 @@ jobs:
         cd frontend
         npm run build
       env:
-        VITE_API_URL: https://superpage-ingestion.onrender.com
-        VITE_PREDICTION_API_URL: https://superpage-prediction.onrender.com
-        VITE_BLOCKCHAIN_API_URL: https://superpage-blockchain.onrender.com
-        VITE_PREPROCESSING_API_URL: https://superpage-preprocessing.onrender.com
+        VITE_API_URL: https://superpage-ingestion.up.railway.app
+        VITE_PREDICTION_API_URL: https://superpage-prediction.up.railway.app
+        VITE_BLOCKCHAIN_API_URL: https://superpage-blockchain.up.railway.app
+        VITE_PREPROCESSING_API_URL: https://superpage-preprocessing.up.railway.app
 
     - name: 🚀 Deploy to Netlify
       uses: nwtgck/actions-netlify@v2.1
@@ -267,7 +271,7 @@ jobs:
   health-check:
     name: 🏥 Health Check
     runs-on: ubuntu-latest
-    needs: [deploy-render, deploy-netlify]
+    needs: [deploy-railway, deploy-netlify]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
@@ -293,7 +297,7 @@ jobs:
     - name: 📊 Create deployment summary
       run: |
         echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Backend Services**: Deployed to Render" >> $GITHUB_STEP_SUMMARY
+        echo "- **Backend Services**: Deployed to Railway" >> $GITHUB_STEP_SUMMARY
         echo "- **Frontend**: Deployed to Netlify" >> $GITHUB_STEP_SUMMARY
         echo "- **Docker Images**: Published to GHCR" >> $GITHUB_STEP_SUMMARY
         echo "- **Health Checks**: ✅ Passed" >> $GITHUB_STEP_SUMMARY

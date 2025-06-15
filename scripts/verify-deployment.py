@@ -16,12 +16,12 @@ import os
 
 # Check if we're running in CI/CD or local environment
 if os.getenv('GITHUB_ACTIONS'):
-    # Production URLs for CI/CD
+    # Production URLs for CI/CD (Railway)
     SERVICES = {
-        "ingestion": "https://superpage-ingestion.onrender.com",
-        "preprocessing": "https://superpage-preprocessing.onrender.com",
-        "prediction": "https://superpage-prediction.onrender.com",
-        "blockchain": "https://superpage-blockchain.onrender.com"
+        "ingestion": "https://superpage-ingestion.up.railway.app",
+        "preprocessing": "https://superpage-preprocessing.up.railway.app",
+        "prediction": "https://superpage-prediction.up.railway.app",
+        "blockchain": "https://superpage-blockchain.up.railway.app"
     }
 else:
     # Local development URLs
