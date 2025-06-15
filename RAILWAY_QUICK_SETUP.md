@@ -1,51 +1,82 @@
 # 🚂 Railway Quick Setup Guide
 
-## ⚠️ Important: Individual Service Deployment
+## ⚠️ Important: Railway GitHub Integration Issue
 
-Railway requires each microservice to be deployed **individually** with its own root directory. Do NOT deploy the entire repository at once.
+Railway's GitHub integration automatically detects the **entire repository**, not individual services. This causes deployment failures.
 
-## 🚀 Step-by-Step Deployment
+## ✅ Solution: Use Railway CLI
 
-### **1. Create Railway Project**
-1. Go to [railway.app](https://railway.app)
-2. Sign in with GitHub
-3. **New Project** → **Empty Project**
-4. Name: `SuperPage`
+The most reliable way to deploy SuperPage is using the **Railway CLI** for individual service deployment.
 
-### **2. Add PostgreSQL Database**
-1. In your project: **+ New** → **Database** → **Add PostgreSQL**
-2. Railway automatically provisions the database
-3. Note the connection string (available as `${{Postgres.DATABASE_URL}}`)
+## 🚀 Quick Deployment (Recommended)
 
-### **3. Deploy Each Service Individually**
+### **Option 1: Automated Deployment (Easiest)**
 
-#### **Service 1: Ingestion Service**
-1. **+ New** → **GitHub Repo**
-2. Select: `mysticalseeker24/SuperPage`
-3. **Root Directory**: `backend/ingestion_service`
-4. **Service Name**: `superpage-ingestion`
-5. **Deploy**
+```bash
+# Make script executable
+chmod +x scripts/deploy-to-railway.sh
 
-#### **Service 2: Preprocessing Service**
-1. **+ New** → **GitHub Repo**
-2. Select: `mysticalseeker24/SuperPage`
-3. **Root Directory**: `backend/preprocessing_service`
-4. **Service Name**: `superpage-preprocessing`
-5. **Deploy**
+# Run automated deployment
+./scripts/deploy-to-railway.sh
+```
 
-#### **Service 3: Prediction Service**
-1. **+ New** → **GitHub Repo**
-2. Select: `mysticalseeker24/SuperPage`
-3. **Root Directory**: `backend/prediction_service`
-4. **Service Name**: `superpage-prediction`
-5. **Deploy**
+This script will:
+- ✅ Install Railway CLI if needed
+- ✅ Login to Railway
+- ✅ Create project and PostgreSQL database
+- ✅ Deploy all 4 services individually
+- ✅ Set up environment variables
+- ✅ Configure database schema
 
-#### **Service 4: Blockchain Service**
-1. **+ New** → **GitHub Repo**
-2. Select: `mysticalseeker24/SuperPage`
-3. **Root Directory**: `backend/blockchain_service`
-4. **Service Name**: `superpage-blockchain`
-5. **Deploy**
+### **Option 2: Manual CLI Deployment**
+
+#### **Step 1: Install Railway CLI**
+```bash
+npm install -g @railway/cli
+railway login
+```
+
+#### **Step 2: Create Project & Database**
+```bash
+railway new SuperPage
+railway add postgresql
+```
+
+#### **Step 3: Deploy Each Service**
+
+```bash
+# Deploy Ingestion Service
+cd backend/ingestion_service
+railway service create superpage-ingestion
+railway up
+
+# Deploy Preprocessing Service
+cd ../preprocessing_service
+railway service create superpage-preprocessing
+railway up
+
+# Deploy Prediction Service
+cd ../prediction_service
+railway service create superpage-prediction
+railway up
+
+# Deploy Blockchain Service
+cd ../blockchain_service
+railway service create superpage-blockchain
+railway up
+```
+
+### **Option 3: Dashboard Deployment (If CLI Fails)**
+
+⚠️ **Note**: Railway's GitHub integration may still deploy the entire repository. Use this only if CLI doesn't work.
+
+1. Create **Empty Project** in Railway dashboard
+2. For each service:
+   - **+ New** → **Empty Service**
+   - **Service Name**: `superpage-[service]`
+   - **Settings** → **Source** → **Connect Repo**
+   - **Root Directory**: `backend/[service]_service`
+   - **Deploy**
 
 ### **4. Configure Environment Variables**
 
