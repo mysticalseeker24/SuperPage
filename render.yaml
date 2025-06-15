@@ -19,8 +19,10 @@ services:
     envVars:
       - key: FIRECRAWL_API_KEY
         sync: false  # Set manually in Render dashboard
-      - key: MONGODB_URL
-        sync: false  # Set manually in Render dashboard
+      - key: DATABASE_URL
+        fromDatabase:
+          name: superpage-db
+          property: connectionString
       - key: DATABASE_NAME
         value: superpage
       - key: SERVICE_NAME
@@ -35,15 +37,11 @@ services:
         value: 8000
       - key: WORKERS
         value: 4
-    
+      - key: FRONTEND_URL
+        value: https://superpage-frontend.netlify.app
+
     # Health Check
     healthCheckPath: /health
-    
-    # Build Command (optional)
-    buildCommand: echo "Building ingestion service..."
-    
-    # Start Command
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
 
   # Preprocessing Service - ML Feature Processing
   - type: web
@@ -59,8 +57,10 @@ services:
     
     # Environment Variables
     envVars:
-      - key: MONGODB_URL
-        sync: false  # Set manually in Render dashboard
+      - key: DATABASE_URL
+        fromDatabase:
+          name: superpage-db
+          property: connectionString
       - key: DATABASE_NAME
         value: superpage
       - key: TOKENIZER_MODEL
@@ -83,15 +83,11 @@ services:
         value: 8000
       - key: WORKERS
         value: 2
-    
+      - key: FRONTEND_URL
+        value: https://superpage-frontend.netlify.app
+
     # Health Check
     healthCheckPath: /health
-    
-    # Build Command
-    buildCommand: echo "Building preprocessing service..."
-    
-    # Start Command
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
 
   # Prediction Service - ML Model Serving with SHAP
   - type: web
@@ -125,15 +121,11 @@ services:
         value: 8000
       - key: WORKERS
         value: 2
-    
+      - key: FRONTEND_URL
+        value: https://superpage-frontend.netlify.app
+
     # Health Check
     healthCheckPath: /health
-    
-    # Build Command
-    buildCommand: echo "Building prediction service..."
-    
-    # Start Command
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 8000
 
   # Blockchain Service - Smart Contract Integration
   - type: web
@@ -175,19 +167,15 @@ services:
         value: 0.0.0.0
       - key: PORT
         value: 8000
-    
+      - key: FRONTEND_URL
+        value: https://superpage-frontend.netlify.app
+
     # Health Check
     healthCheckPath: /health
-    
-    # Build Command
-    buildCommand: echo "Building blockchain service..."
-    
-    # Start Command
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 8000
 
-# Database Configuration (if using Render PostgreSQL)
+# Database Configuration - Render PostgreSQL
 databases:
-  - name: superpage-mongodb
+  - name: superpage-db
     databaseName: superpage
     user: superpage_user
     region: oregon
