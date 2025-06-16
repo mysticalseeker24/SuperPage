@@ -1,61 +1,69 @@
-# Multi-stage build for smaller production image
-FROM python:3.9-slim as builder
+# Railway-optimized Multi-Stage Dockerfile for SuperPage Preprocessing Service
+# Ultra-lightweight build to stay under 4GB limit
+
+# Stage 1: Builder
+FROM python:3.9-slim AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy production requirements
-COPY requirements-prod.txt requirements.txt
-
-# Install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir --user -r requirements.txt
-
-# Production stage
-FROM python:3.9-slim
-
-# Set working directory
-WORKDIR /app
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app \
-    PATH=/root/.local/bin:$PATH \
-    FRONTEND_URL="http://localhost:3000"
-
-# Install only runtime dependencies
-RUN apt-get update && apt-get install -y \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy installed packages from builder
-COPY --from=builder /root/.local /root/.local
+# Copy Railway-specific requirements
+COPY requirements-railway.txt requirements.txt
+
+# Install Python dependencies with CPU-only PyTorch and aggressive optimization
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -r requirements.txt && \
+    find /usr/local -name "*.pyc" -delete && \
+    find /usr/local -name "__pycache__" -type d -exec rm -rf {} + || true
 
 # Copy application code
 COPY . .
 
-# Create logs directory for volume mount
+# Stage 2: Runtime
+FROM python:3.9-slim
+
+# Set environment variables for Railway
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PORT=8000
+
+# Set working directory
+WORKDIR /app
+
+# Install only runtime dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy Python packages from builder stage
+COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copy application code from builder stage
+COPY --from=builder /app /app
+
+# Create logs directory
 RUN mkdir -p /app/logs && chmod 755 /app/logs
 
 # Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN chown -R appuser:appuser /app
+RUN groupadd -r appuser && useradd -r -g appuser appuser && \
+    chown -R appuser:appuser /app
 USER appuser
 
-# Expose port (8000 for Render compatibility, 8001 for local development)
-EXPOSE 8000
-EXPOSE 8001
+# Expose Railway port
+EXPOSE $PORT
 
-# Health check (use PORT env var for flexibility)
+# Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT:-8001}/health || exit 1
+    CMD curl -f http://localhost:$PORT/health || exit 1
 
-# Run the application with optimal workers (use PORT env var for deployment flexibility)
-CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8001} --workers ${WORKERS:-2}
+# Run with Railway's PORT environment variable
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT

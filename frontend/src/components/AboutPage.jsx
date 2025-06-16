@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import rehypeSanitize from 'rehype-sanitize'
@@ -534,15 +534,29 @@ const RoadmapCard = ({ phase, index }) => {
 }
 
 const AboutPage = () => {
-  const [markdownContent, setMarkdownContent] = useState('')
+  // Embedded markdown content to avoid deployment issues with public file serving
+  const markdownContent = `# About SuperPage
 
-  useEffect(() => {
-    // Fetch the markdown content
-    fetch('/about.md')
-      .then(response => response.text())
-      .then(text => setMarkdownContent(text))
-      .catch(error => console.error('Error loading about.md:', error))
-  }, [])
+## 🚀 Revolutionizing Web3 Fundraising with AI
+
+SuperPage is a cutting-edge, **privacy-first decentralized platform** that leverages artificial intelligence and federated learning to predict the success of Web3 startup fundraising campaigns. Built with a **microservices architecture** and **mandatory wallet authentication**, our mission is to democratize access to funding insights while maintaining privacy and security through blockchain technology.
+
+### 🎯 **Key Highlights**
+- **🔐 Wallet-First Authentication**: Mandatory MetaMask connection for secure Web3 access
+- **🤖 AI-Powered Predictions**: 7-feature ML model with SHAP explanations
+- **🔒 Privacy-First**: Federated learning with no data sharing
+- **⛓️ Blockchain Verified**: Immutable on-chain prediction storage
+- **🏗️ Microservices**: 5 specialized backend services + smart contracts
+- **📱 Modern UI**: React with glassmorphism design and smooth animations
+
+## Our Vision
+
+In the rapidly evolving Web3 ecosystem, startups face unprecedented challenges in securing funding. Traditional venture capital processes are often opaque, biased, and inaccessible to many innovative projects. SuperPage bridges this gap by providing:
+
+- **Data-driven insights** powered by advanced machine learning
+- **Privacy-first approach** using federated learning
+- **Transparent predictions** stored immutably on-chain
+- **Community-driven intelligence** from collective startup data`
 
   // Custom markdown components
   const markdownComponents = {
