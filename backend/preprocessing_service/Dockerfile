@@ -35,6 +35,11 @@ ENV PIP_NO_CACHE_DIR=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PORT=8000
 
+# Set transformers cache directories to writable locations
+ENV TRANSFORMERS_CACHE=/tmp/transformers_cache
+ENV HF_HOME=/tmp/huggingface
+ENV TOKENIZERS_PARALLELISM=false
+
 # Set working directory
 WORKDIR /app
 
@@ -50,8 +55,10 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy application code from builder stage
 COPY --from=builder /app /app
 
-# Create logs directory
-RUN mkdir -p /app/logs && chmod 755 /app/logs
+# Create logs and cache directories with proper permissions
+RUN mkdir -p /app/logs && chmod 755 /app/logs && \
+    mkdir -p /tmp/transformers_cache && chmod 777 /tmp/transformers_cache && \
+    mkdir -p /tmp/huggingface && chmod 777 /tmp/huggingface
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser && \

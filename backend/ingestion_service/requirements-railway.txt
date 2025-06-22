@@ -1,0 +1,26 @@
+# SuperPage Ingestion Service Dependencies - Railway Optimized
+# Minimal dependencies for Railway deployment under 4GB limit
+
+# Core FastAPI dependencies
+fastapi>=0.104.1,<0.120.0
+uvicorn[standard]>=0.24.0,<0.35.0
+pydantic>=2.5.0,<3.0.0
+
+# HTTP client for API calls
+requests>=2.31.0,<3.0.0
+httpx>=0.25.2,<1.0.0
+
+# Database drivers (PostgreSQL for Railway, MongoDB for development)
+asyncpg>=0.29.0,<1.0.0
+sqlalchemy>=2.0.0,<3.0.0
+motor>=3.3.0,<4.0.0
+psycopg2-binary>=2.9.0,<3.0.0
+
+# Environment and configuration
+python-dotenv>=1.0.0,<2.0.0
+
+# Logging and monitoring
+structlog>=23.2.0,<26.0.0
+
+# Essential utilities only
+python-multipart>=0.0.6,<1.0.0

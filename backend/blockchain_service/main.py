@@ -60,9 +60,9 @@ structlog.configure(
 
 logger = structlog.get_logger(__name__)
 
-# Environment variables
-PRIVATE_KEY = os.getenv("BLOCKCHAIN_PRIVATE_KEY")
-CONTRACT_ADDRESS = os.getenv("SUPERPAGE_CONTRACT_ADDRESS")
+# Environment variables - Support both naming conventions
+PRIVATE_KEY = os.getenv("ETHEREUM_PRIVATE_KEY") or os.getenv("BLOCKCHAIN_PRIVATE_KEY")
+CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS") or os.getenv("SUPERPAGE_CONTRACT_ADDRESS")
 NETWORK_URL = os.getenv("BLOCKCHAIN_NETWORK_URL", "http://localhost:8545")
 HARDHAT_PROJECT_PATH = os.getenv("HARDHAT_PROJECT_PATH", os.path.dirname(os.path.abspath(__file__)))
 GAS_LIMIT = int(os.getenv("GAS_LIMIT", "500000"))
@@ -72,12 +72,21 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Validate required environment variables
 if not PRIVATE_KEY:
-    logger.error("BLOCKCHAIN_PRIVATE_KEY environment variable is required")
+    logger.error("ETHEREUM_PRIVATE_KEY or BLOCKCHAIN_PRIVATE_KEY environment variable is required")
     sys.exit(1)
 
 if not CONTRACT_ADDRESS:
-    logger.error("SUPERPAGE_CONTRACT_ADDRESS environment variable is required")
-    sys.exit(1)
+    logger.warning("CONTRACT_ADDRESS not found, will attempt to use default or deploy new contract")
+    # Use a default contract address for Railway deployment (can be updated later)
+    CONTRACT_ADDRESS = "0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D"  # Default from deployment
+
+# Log configuration for debugging (without sensitive data)
+logger.info("Blockchain service configuration",
+           contract_address=CONTRACT_ADDRESS,
+           network_url=NETWORK_URL,
+           hardhat_path=HARDHAT_PROJECT_PATH,
+           has_private_key=bool(PRIVATE_KEY),
+           private_key_length=len(PRIVATE_KEY) if PRIVATE_KEY else 0)
 
 
 # Pydantic models

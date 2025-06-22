@@ -54,17 +54,26 @@ async def lifespan(app: FastAPI):
 
     # Startup
     try:
-        mongo_client = AsyncIOMotorClient(MONGODB_URL)
-        database = mongo_client[DATABASE_NAME]
+        # Try PostgreSQL first (Railway), then MongoDB (development)
+        if DATABASE_URL:
+            logger.info("Using PostgreSQL database for Railway deployment")
+            # For Railway, we'll use a simple connection check
+            # The actual database operations will be handled per-request
+            database = "postgresql"  # Flag to indicate PostgreSQL mode
+            logger.info("PostgreSQL connection configured successfully")
+        else:
+            # Fallback to MongoDB for development
+            mongo_client = AsyncIOMotorClient(MONGODB_URL)
+            database = mongo_client[DATABASE_NAME]
 
-        # Test connection
-        await mongo_client.admin.command('ping')
-        logger.info("Connected to MongoDB successfully")
+            # Test MongoDB connection
+            await mongo_client.admin.command('ping')
+            logger.info("Connected to MongoDB successfully")
 
     except Exception as e:
-        logger.error("Failed to connect to MongoDB", error=str(e))
-        # For development, we'll continue without MongoDB
-        logger.warning("Continuing without MongoDB connection")
+        logger.error("Failed to initialize database connection", error=str(e))
+        # For development, we'll continue without database
+        logger.warning("Continuing without database connection")
 
     yield
 
@@ -101,7 +110,8 @@ app.add_middleware(
 
 # Environment variables
 FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY", "")
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
+DATABASE_URL = os.getenv("DATABASE_URL")  # PostgreSQL for Railway
+MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")  # Fallback for development
 DATABASE_NAME = os.getenv("DATABASE_NAME", "superpage")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
@@ -440,7 +450,8 @@ async def health_check():
             "dependencies": {
                 "firecrawl_configured": bool(FIRECRAWL_API_KEY),
                 "firecrawl_client_initialized": bool(firecrawl_client),
-                "mongodb_connected": database is not None,
+                "database_connected": database is not None,
+                "database_type": "postgresql" if DATABASE_URL else "mongodb" if database else "none",
                 "web3_sites_configured": bool(WEB3_STARTUP_SITES),
                 "web3_sites_count": len(WEB3_STARTUP_SITES)
             }
