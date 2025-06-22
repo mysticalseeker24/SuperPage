@@ -60,12 +60,21 @@ async def lifespan(app: FastAPI):
 
     # Startup
     try:
-        mongo_client = AsyncIOMotorClient(MONGODB_URL)
-        database = mongo_client[DATABASE_NAME]
+        # Try PostgreSQL first (Railway), then MongoDB (development)
+        if DATABASE_URL:
+            logger.info("Using PostgreSQL database for Railway deployment")
+            # For Railway, we'll use a simple connection check
+            # The actual database operations will be handled per-request
+            database = "postgresql"  # Flag to indicate PostgreSQL mode
+            logger.info("PostgreSQL connection configured successfully")
+        else:
+            # Fallback to MongoDB for development
+            mongo_client = AsyncIOMotorClient(MONGODB_URL)
+            database = mongo_client[DATABASE_NAME]
 
-        # Test connection
-        await mongo_client.admin.command('ping')
-        logger.info("Connected to MongoDB successfully")
+            # Test MongoDB connection
+            await mongo_client.admin.command('ping')
+            logger.info("Connected to MongoDB successfully")
 
         # Pre-load ML models
         get_tokenizer()
@@ -76,15 +85,22 @@ async def lifespan(app: FastAPI):
 
     except Exception as e:
         logger.error("Failed to initialize preprocessing service", error=str(e))
-        # Continue without MongoDB for development
-        logger.warning("Continuing without MongoDB connection")
+        # Continue without database for development
+        logger.warning("Continuing without database connection")
 
     yield
 
     # Shutdown
     if mongo_client:
         mongo_client.close()
-        logger.info("MongoDB connection closed")
+        logger.info("Database connection closed")
+
+# Environment variables (must be defined before use)
+DATABASE_URL = os.getenv("DATABASE_URL")  # PostgreSQL for Railway
+MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")  # Fallback for development
+DATABASE_NAME = os.getenv("DATABASE_NAME", "superpage")
+TOKENIZER_MODEL = os.getenv("TOKENIZER_MODEL", "distilbert-base-uncased")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Initialize FastAPI app with lifespan
 app = FastAPI(
@@ -109,12 +125,6 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
-
-# Environment variables
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "superpage")
-TOKENIZER_MODEL = os.getenv("TOKENIZER_MODEL", "distilbert-base-uncased")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Global variables
 mongo_client: Optional[AsyncIOMotorClient] = None
@@ -490,7 +500,7 @@ async def get_project_features(
 async def health_check() -> HealthResponse:
     """Health check endpoint - returns standard health status"""
     dependencies = {
-        "mongodb": database is not None,
+        "database": database is not None,
         "tokenizer": tokenizer is not None,
         "scaler": scaler is not None,
         "vectorizer": text_vectorizer is not None

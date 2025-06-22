@@ -12,9 +12,17 @@ pandas>=2.1.4,<3.0.0
 numpy>=1.24.4,<2.0.0
 scikit-learn>=1.3.2,<1.6.0
 
-# Database drivers
+# Text processing (required for tokenization)
+transformers>=4.36.2,<5.0.0
+tokenizers>=0.15.0,<1.0.0
+
+# Database drivers (PostgreSQL for Railway)
 asyncpg>=0.29.0,<1.0.0
 sqlalchemy>=2.0.0,<3.0.0
+psycopg2-binary>=2.9.0,<3.0.0
+
+# MongoDB support (fallback/development)
+motor>=3.3.0,<4.0.0
 
 # HTTP client and async support
 httpx>=0.25.2,<1.0.0
