@@ -84,6 +84,13 @@ async def lifespan(app: FastAPI):
     if firecrawl_client:
         firecrawl_client.close()
 
+# Environment variables (must be defined before use)
+FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY", "")
+DATABASE_URL = os.getenv("DATABASE_URL")  # PostgreSQL for Railway
+MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")  # Fallback for development
+DATABASE_NAME = os.getenv("DATABASE_NAME", "superpage")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
 # Initialize FastAPI app with lifespan
 app = FastAPI(
     title="SuperPage Ingestion Service",
@@ -107,13 +114,6 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
-
-# Environment variables
-FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY", "")
-DATABASE_URL = os.getenv("DATABASE_URL")  # PostgreSQL for Railway
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")  # Fallback for development
-DATABASE_NAME = os.getenv("DATABASE_NAME", "superpage")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 # Load Web3 sites configuration from JSON file
 def load_web3_config():
