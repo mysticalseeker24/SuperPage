@@ -44,5 +44,5 @@ EXPOSE 8010
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8010}/health || exit 1
 
-# Run the application with optimal workers (use PORT env var for deployment flexibility)
-CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8010} --workers ${WORKERS:-4}
+# Run the application with optimal workers (JSON format for proper signal handling)
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8010} --workers ${WORKERS:-4}"]

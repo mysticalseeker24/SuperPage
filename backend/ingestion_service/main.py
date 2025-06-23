@@ -268,23 +268,29 @@ async def process_ingestion(job_id: str, url: str, schema: Dict[str, Any]):
             status="completed"
         )
 
-        # Store in MongoDB or print for development
-        if database is not None:
+        # Store in database or print for development
+        if database and hasattr(database, 'name'):  # MongoDB database object
             collection = database["ingestion_jobs"]
             await collection.insert_one(extracted_data.dict())
             logger.info("Data stored in MongoDB", job_id=job_id)
+        elif database == "postgresql":
+            # For PostgreSQL, we would implement database storage here
+            # For now, just log that we're in PostgreSQL mode
+            logger.info("PostgreSQL mode - data would be stored in PostgreSQL", job_id=job_id)
+            print(f"INGESTION RESULT [{job_id}] (PostgreSQL mode):")
+            print(json.dumps(extracted_data.dict(), indent=2))
         else:
             # Development stub - print the result
             print(f"INGESTION RESULT [{job_id}]:")
             print(json.dumps(extracted_data.dict(), indent=2))
-            logger.info("Data printed to console (MongoDB not available)", job_id=job_id)
+            logger.info("Data printed to console (database not available)", job_id=job_id)
 
         logger.info("Ingestion job completed successfully", job_id=job_id)
 
     except ValidationError as e:
         logger.error("Data validation failed", job_id=job_id, error=str(e))
         # Store error status
-        if database is not None:
+        if database and hasattr(database, 'name'):  # MongoDB database object
             collection = database["ingestion_jobs"]
             await collection.insert_one({
                 "job_id": job_id,
@@ -297,7 +303,7 @@ async def process_ingestion(job_id: str, url: str, schema: Dict[str, Any]):
     except Exception as e:
         logger.error("Ingestion job failed", job_id=job_id, error=str(e))
         # Store error status
-        if database is not None:
+        if database and hasattr(database, 'name'):  # MongoDB database object
             collection = database["ingestion_jobs"]
             await collection.insert_one({
                 "job_id": job_id,
@@ -380,7 +386,7 @@ async def process_web3_batch_ingestion(job_id: str, urls: List[str], schema: Dic
         "extracted_data": all_extracted_data
     }
 
-    if database is not None:
+    if database and hasattr(database, 'name'):  # MongoDB database object
         collection = database["batch_ingestion_jobs"]
         await collection.insert_one(batch_summary)
         logger.info("Web3 batch ingestion completed and stored", job_id=job_id,
@@ -435,6 +441,18 @@ async def ingest_data(
 async def health_check():
     """Health check endpoint - returns standard health status"""
     try:
+        # Check database connection safely
+        database_connected = False
+        database_type = "none"
+
+        if database:
+            if isinstance(database, str) and database == "postgresql":
+                database_connected = True
+                database_type = "postgresql"
+            elif hasattr(database, 'name'):  # MongoDB database object
+                database_connected = True
+                database_type = "mongodb"
+
         # Check critical dependencies
         is_healthy = (
             bool(FIRECRAWL_API_KEY) and
@@ -450,8 +468,8 @@ async def health_check():
             "dependencies": {
                 "firecrawl_configured": bool(FIRECRAWL_API_KEY),
                 "firecrawl_client_initialized": bool(firecrawl_client),
-                "database_connected": database is not None,
-                "database_type": "postgresql" if DATABASE_URL else "mongodb" if database else "none",
+                "database_connected": database_connected,
+                "database_type": database_type,
                 "web3_sites_configured": bool(WEB3_STARTUP_SITES),
                 "web3_sites_count": len(WEB3_STARTUP_SITES)
             }
@@ -469,7 +487,7 @@ async def health_check():
 @app.get("/jobs/{job_id}")
 async def get_job_status(job_id: str):
     """Get status of a specific ingestion job"""
-    if database is None:
+    if not database or not hasattr(database, 'name'):
         return {"error": "Database not available"}
 
     collection = database["ingestion_jobs"]

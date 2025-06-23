@@ -11,14 +11,17 @@
 
 The SuperPage frontend is a modern, responsive React application that provides an intuitive interface for Web3 fundraising prediction. Built with OnlyFounders-inspired design principles using CSS-in-JS and Framer Motion, it features clean aesthetics, generous whitespace, and smooth animations without any CSS framework dependencies.
 
-### ✨ **New Features Added**
+### ✨ **Latest Features Added**
 - **🧭 React Router DOM**: Complete page routing with /predict, /explore, /about, /404
 - **📄 AboutPage**: Markdown-rendered documentation with scroll animations
 - **🏠 HomePage**: Hero section, features grid, and stats dashboard
-- **🔍 ExplorePage**: Community predictions with filtering and search
+- **🔍 ExplorePage**: Completely redesigned with clean card-based UI
+- **💾 Prediction Storage**: User predictions stored and displayed prominently
+- **🎨 Glassmorphism Design**: Beautiful card layouts with backdrop blur
 - **🌐 Centralized API Client**: Unified axios client with error handling
-- **🎨 CSS-in-JS**: No Tailwind dependency, pure inline styles
-- **📱 Responsive Layout**: Mobile-first design with sticky navigation
+- **🎯 User Prediction Badges**: Special highlighting for user-created predictions
+- **📱 Responsive Grid**: Auto-fit card layout for all screen sizes
+- **🔄 API Resilience**: Multi-tier fallback system with mock data support
 
 ## 🎨 Design System
 
@@ -221,12 +224,63 @@ docker run -p 3000:3000 superpage-frontend
 
 ## 🔗 API Integration
 
-### Prediction Flow
-1. User fills out pitch form (7 features)
-2. Form data converted to ML feature vector
-3. POST to `/api/prediction/predict`
-4. Display results with SHAP explanations
-5. Optional: Publish to blockchain
+### Prediction Flow Architecture
+
+```mermaid
+graph TD
+    A[User Fills Pitch Form] --> B[Convert to ML Features]
+    B --> C[Call Prediction API]
+    C --> D{API Available?}
+    D -->|Yes| E[Get Real Prediction]
+    D -->|No| F[Use Mock Prediction]
+    E --> G[Store in localStorage]
+    F --> G
+    G --> H[Show Prediction Card]
+    H --> I[Navigate to Explore]
+    I --> J[User Prediction at Top]
+
+    style A fill:#CA4E79,color:white
+    style G fill:#10b981,color:white
+    style J fill:#3b82f6,color:white
+```
+
+### Frontend-Backend Communication
+
+```mermaid
+graph LR
+    subgraph "Frontend Components"
+        PF[PitchForm] --> PC[PredictionCard]
+        PC --> EP[ExplorePage]
+        EP --> SL[StartupsList]
+    end
+
+    subgraph "API Layer"
+        AC[API Clients] --> PS[Prediction Service]
+        AC --> BS[Blockchain Service]
+        AC --> IS[Ingestion Service]
+    end
+
+    subgraph "Storage"
+        LS[localStorage] --> UP[User Predictions]
+        UP --> EP
+    end
+
+    PF --> AC
+    PC --> LS
+
+    style PF fill:#CA4E79,color:white
+    style LS fill:#10b981,color:white
+    style EP fill:#3b82f6,color:white
+```
+
+### Detailed Prediction Flow
+1. **Form Input**: User fills out pitch form (7 features)
+2. **Feature Conversion**: Form data converted to ML feature vector
+3. **API Call**: POST to `/api/prediction/predict` with fallback
+4. **Storage**: Prediction stored in localStorage for persistence
+5. **Display**: Results shown with SHAP explanations
+6. **Explore Integration**: User predictions appear at top of Explore page
+7. **Optional**: Publish to blockchain via smart contract
 
 ### Feature Mapping
 The frontend converts form inputs to ML features:
@@ -237,6 +291,23 @@ The frontend converts form inputs to ML features:
 - **Community Engagement** → `CommunityEngagement` (0.0-0.5)
 - **Previous Funding** → `PreviousFunding` (0-100M USD)
 - **Calculated** → `RaiseSuccessProb` (0.0-1.0 computed)
+
+### API Resilience Strategy
+```javascript
+// Multi-tier fallback system
+try {
+  // 1. Direct service call
+  const response = await fetch('http://localhost:8002/predict')
+  if (response.ok) return await response.json()
+
+  // 2. Proxy endpoint fallback
+  const proxyResponse = await apiClient.post('/api/prediction/predict')
+  return proxyResponse.data
+} catch (error) {
+  // 3. Mock data for development
+  return generateMockPrediction()
+}
+```
 
 ## 🎯 User Experience
 

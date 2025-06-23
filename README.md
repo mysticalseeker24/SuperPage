@@ -13,6 +13,7 @@ SuperPage is a privacy-first, decentralized fundraising prediction platform that
 
 ## 🏗️ Architecture
 
+### System Overview
 ```
 SuperPage/
 ├── backend/                    # Microservices Backend
@@ -36,6 +37,47 @@ SuperPage/
 ├── docker-compose.yml         # Multi-service orchestration
 ├── DOCKER_SETUP.md           # Complete Docker guide
 └── .github/                   # CI/CD workflows
+```
+
+### Prediction Flow Architecture
+
+```mermaid
+graph TD
+    A[User Fills Pitch Form] --> B[Convert to ML Features]
+    B --> C[Call Prediction API]
+    C --> D{API Available?}
+    D -->|Yes| E[Get Real Prediction]
+    D -->|No| F[Use Mock Prediction]
+    E --> G[Store in localStorage]
+    F --> G
+    G --> H[Show Prediction Card]
+    H --> I[Navigate to Explore]
+    I --> J[User Prediction at Top]
+
+    style A fill:#CA4E79,color:white
+    style G fill:#10b981,color:white
+    style J fill:#3b82f6,color:white
+```
+
+### Service Communication Flow
+
+```mermaid
+graph LR
+    Frontend[React Frontend<br/>Port 3000] --> Ingestion[Ingestion Service<br/>Port 8010]
+    Frontend --> Preprocessing[Preprocessing Service<br/>Port 8001]
+    Frontend --> Prediction[Prediction Service<br/>Port 8002]
+    Frontend --> Blockchain[Blockchain Service<br/>Port 8003]
+
+    Ingestion --> MongoDB[(MongoDB<br/>Database)]
+    Preprocessing --> MongoDB
+    Training[Training Service<br/>CLI] --> Models[/models/latest/]
+    Prediction --> Models
+    Blockchain --> Sepolia[Sepolia Testnet<br/>Smart Contract]
+
+    style Frontend fill:#61dafb,color:black
+    style MongoDB fill:#47a248,color:white
+    style Sepolia fill:#627eea,color:white
+    style Models fill:#ff6b6b,color:white
 ```
 
 ## 🚀 Features
@@ -75,9 +117,12 @@ SuperPage/
 - **📄 React Router DOM**: Complete page routing with /predict, /explore, /about, /404
 - **📋 AboutPage**: Comprehensive documentation with interactive dropdowns
 - **🏠 HomePage**: Hero section, features grid, and interactive stats dashboard
-- **🔍 ExplorePage**: Community predictions with filtering, search, and modal details
+- **🔍 ExplorePage**: Redesigned with clean card-based UI and user prediction highlighting
+- **💾 Prediction Storage**: User predictions automatically stored and displayed at top
+- **🎯 User Badges**: Special highlighting for user-created predictions with star badges
 - **🌐 Centralized API Client**: Unified axios client with error handling and toast notifications
-- **🎯 CSS-in-JS**: No framework dependencies, pure inline styles with Framer Motion
+- **🔄 API Resilience**: Multi-tier fallback system ensuring functionality even when services are down
+- **� CSS-in-JS**: No framework dependencies, pure inline styles with Framer Motion
 
 ## 🛠️ Tech Stack
 

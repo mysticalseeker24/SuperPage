@@ -30,6 +30,28 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
       return await predictionService.predict(features)
     },
     onSuccess: (data) => {
+      // Store prediction in localStorage for Explore page
+      const predictionData = {
+        id: `user-${Date.now()}`,
+        projectId: `user-${Date.now().toString().slice(-6)}`,
+        title: watchedValues.pitchTitle,
+        score: data.score,
+        timestamp: new Date().toISOString(),
+        teamExperience: watchedValues.teamExperience,
+        previousFunding: watchedValues.previousFunding,
+        traction: watchedValues.traction,
+        category: 'User Submission',
+        walletAddress: walletAddress,
+        isUserPrediction: true,
+        formData: watchedValues,
+        explanations: data.explanations,
+      }
+
+      // Get existing predictions and add new one at the beginning
+      const existingPredictions = JSON.parse(localStorage.getItem('superpage_predictions') || '[]')
+      const updatedPredictions = [predictionData, ...existingPredictions.slice(0, 19)] // Keep max 20
+      localStorage.setItem('superpage_predictions', JSON.stringify(updatedPredictions))
+
       onPredictionSuccess({
         ...data,
         formData: watchedValues,
