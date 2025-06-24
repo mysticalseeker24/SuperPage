@@ -1,32 +1,56 @@
 # SuperPage Blockchain Service
 
-The blockchain service provides secure on-chain publishing of prediction results using smart contracts. It integrates FastAPI with HardHat/Ethers.js to enable transparent, immutable storage of fundraising predictions on the Ethereum blockchain.
+> Smart contract integration service for immutable on-chain prediction storage
 
-## Features
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688.svg)](https://fastapi.tiangolo.com/)
+[![HardHat](https://img.shields.io/badge/HardHat-2.19.0-FFF100.svg)](https://hardhat.org/)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.19-363636.svg)](https://soliditylang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Supported-2496ED.svg)](https://www.docker.com/)
 
-- **Smart Contract Integration**: Publish predictions to Ethereum smart contracts
-- **HardHat Integration**: Seamless integration with HardHat development environment
-- **Secure Key Management**: Environment-based private key and contract address management
-- **Transaction Monitoring**: Real-time transaction status tracking and confirmation
-- **Gas Optimization**: Configurable gas limits and pricing for cost efficiency
-- **Comprehensive Testing**: Unit tests with subprocess mocking for HardHat scripts
-- **Production Ready**: Docker support with multi-stage builds
+## 🎯 Overview
 
-## Architecture
+The SuperPage Blockchain Service provides secure on-chain publishing of prediction results using smart contracts on the Ethereum Sepolia testnet. It bridges Python FastAPI with HardHat/Ethers.js to enable transparent, immutable storage of fundraising predictions with cryptographic verification.
 
-### Smart Contract
-The `SuperPagePrediction.sol` contract provides:
-- Immutable prediction storage with cryptographic proofs
-- Access control for authorized publishers
-- Event emission for transparency
-- Gas-optimized operations
+### 🏗️ Architecture
 
-### API Integration
-- **FastAPI Service**: Async REST API for blockchain interactions
-- **HardHat Scripts**: JavaScript scripts for contract interactions
-- **Subprocess Bridge**: Python-to-Node.js communication via subprocess calls
+```mermaid
+graph TD
+    A[Prediction Service] --> B[Blockchain Service :8003]
+    B --> C[HardHat Scripts]
+    C --> D[Smart Contract]
+    D --> E[Ethereum Sepolia]
+    
+    B --> F[FastAPI REST API]
+    F --> G[Transaction Manager]
+    G --> H[Gas Optimizer]
+    
+    style B fill:#CA4E79,stroke:#fff,color:#fff
+    style D fill:#627eea,stroke:#fff,color:#fff
+    style E fill:#f7931e,stroke:#fff,color:#fff
+```
 
-## API Endpoints
+## ✨ Key Features
+
+- **🔗 Smart Contract Integration**: Seamless Ethereum blockchain interaction
+- **⛽ Gas Optimization**: Efficient transaction cost management
+- **🔐 Secure Key Management**: Environment-based private key handling
+- **📊 Transaction Monitoring**: Real-time status tracking and confirmations
+- **🔄 Retry Logic**: Robust error handling with automatic retries
+- **📈 Event Logging**: Comprehensive transaction and error logging
+- **🐳 Docker Ready**: Production-ready containerization
+
+## 🛠️ Tech Stack
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **API Framework** | FastAPI 0.104.1 | High-performance async REST API |
+| **Blockchain** | HardHat 2.19.0 | Ethereum development environment |
+| **Smart Contracts** | Solidity 0.8.19 | Contract development language |
+| **Web3 Library** | Ethers.js 6.8.0 | Ethereum JavaScript library |
+| **Process Bridge** | Subprocess | Python-to-Node.js communication |
+| **Environment** | Python 3.11+ | Runtime environment |
+
+## 📋 API Endpoints
 
 ### POST /publish
 Publish a prediction result to the blockchain smart contract.
@@ -49,305 +73,233 @@ Publish a prediction result to the blockchain smart contract.
 ```json
 {
   "success": true,
-  "transaction": {
-    "tx_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-    "status": "confirmed",
-    "block_number": 12345678,
-    "gas_used": 85000,
-    "timestamp": "2024-01-15T10:30:00Z"
-  },
-  "project_id": "defi-protocol-xyz",
-  "score": 0.7234,
-  "contract_address": "0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D"
+  "transaction_hash": "0xabc123...",
+  "prediction_id": "pred_12345",
+  "gas_used": 45678,
+  "confirmation_time": 15.2,
+  "etherscan_url": "https://sepolia.etherscan.io/tx/0xabc123..."
 }
 ```
 
-### GET /transaction/{tx_hash}
-Get transaction status and details by hash.
-
 ### GET /health
-Health check endpoint with blockchain connectivity status.
+Service health check with blockchain connectivity status.
 
-## Quick Start
+**Response:**
+```json
+{
+  "status": "healthy",
+  "blockchain_connected": true,
+  "contract_address": "0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D",
+  "network": "sepolia",
+  "block_number": 4567890,
+  "service_uptime": "2h 30m 15s"
+}
+```
+
+### GET /status/{transaction_hash}
+Check the status of a blockchain transaction.
+
+**Response:**
+```json
+{
+  "status": "confirmed",
+  "confirmations": 12,
+  "block_number": 4567891,
+  "gas_used": 45678,
+  "gas_price": "20000000000",
+  "success": true
+}
+```
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.9+
-- Node.js 18+
-- HardHat development environment
-- Ethereum node (Infura or local)
-
-### Environment Setup
-
-1. **Copy Environment File**
-```bash
-cp .env.example .env
-```
-
-2. **Configure Environment Variables**
-```bash
-# Required
-BLOCKCHAIN_PRIVATE_KEY=0x...your_private_key...
-SUPERPAGE_CONTRACT_ADDRESS=0x...contract_address...
-
-# Optional
-BLOCKCHAIN_NETWORK_URL=https://sepolia.infura.io/v3/...your_infura_project_id...
-GAS_LIMIT=2000000
-GAS_PRICE=2000000000
-```
+- **Python 3.11+** with pip installed
+- **Node.js 18+** and npm (for HardHat)
+- **Ethereum Sepolia testnet ETH** for transactions
+- **Private key** with testnet funds
 
 ### Local Development
 
-1. **Install Dependencies**
-```bash
-# Python dependencies
-pip install -r requirements.txt
+1. **Clone and Navigate**
+   ```bash
+   git clone <repository-url>
+   cd SuperPage/backend/blockchain_service
+   ```
 
-# Node.js dependencies
-npm install
-```
-2. **Start Local Blockchain**
-```bash
-npx hardhat node
-```
+2. **Install Python Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-3. **Deploy Smart Contract**
-```bash
-npx hardhat run scripts/deploy.js --network sepolia (npx hardhat run scripts/publish-prediction.js --network sepolia)
-```
+3. **Install Node.js Dependencies**
+   ```bash
+   npm install
+   ```
 
-4. **Run Service**
-```bash
-python main.py
-# Or with uvicorn
-uvicorn main:app --host 0.0.0.0 --port 8003 --reload
-```
+4. **Environment Configuration**
+   ```bash
+   # Create .env file
+   cp .env.example .env
+   
+   # Edit with your configuration
+   PRIVATE_KEY=your_sepolia_private_key_here
+   CONTRACT_ADDRESS=0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D
+   SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
+   ```
+
+5. **Start the Service**
+   ```bash
+   python main.py
+   ```
+   
+   The service will be available at `http://localhost:8003`
 
 ### Docker Deployment
 
-**Development:**
 ```bash
+# Build and run with Docker
 docker build -t superpage-blockchain .
 docker run -p 8003:8003 --env-file .env superpage-blockchain
+
+# Or use Docker Compose (recommended)
+cd ../.. && docker-compose up blockchain_service
 ```
 
-**Production:**
+## ⚙️ Configuration
+
+### Environment Variables
+
 ```bash
-docker build --target production -t superpage-blockchain-prod .
-docker run -p 8003:8003 --env-file .env superpage-blockchain-prod
+# Required
+PRIVATE_KEY=your_sepolia_private_key_without_0x_prefix
+CONTRACT_ADDRESS=0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D
+
+# Optional (with defaults)
+SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_PROJECT_ID
+PORT=8003
+LOG_LEVEL=INFO
+MAX_GAS_PRICE=50000000000  # 50 Gwei
+GAS_LIMIT=100000
+RETRY_ATTEMPTS=3
+RETRY_DELAY=5
 ```
 
-## Current Deployment (Sepolia Testnet)
+### HardHat Configuration
 
-### Live Contract Information
-- **Contract Address**: `0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D`
-- **Network**: Sepolia Testnet (Chain ID: 11155111)
-- **Explorer**: [View on Etherscan](https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D)
-- **Deployer**: `0xf60944AF65a3F35b02cc251fe884767213dFAB8D`
-- **Transaction Hash**: `0x0528026d188b6fbaed14d8b92c85fbd74136a303396e87e3b46d884bf9700fcb`
-- **Gas Used**: 1,043,454 gas
-- **Deployment Cost**: 0.002086908 ETH
+```javascript
+// hardhat.config.js
+module.exports = {
+  solidity: "0.8.19",
+  networks: {
+    sepolia: {
+      url: process.env.SEPOLIA_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY]
+    }
+  },
+  gasReporter: {
+    enabled: true,
+    currency: 'USD'
+  }
+};
+```
 
-### Contract Status
-- ✅ **Deployed**: Successfully deployed to Sepolia testnet
-- ✅ **Verified**: Contract owner and authorization confirmed
-- ✅ **Operational**: Ready for prediction publishing
-- ✅ **Gas Optimized**: Using 2 gwei gas price for cost efficiency
+## 📜 Smart Contract
 
-## Smart Contract
-
-### SuperPagePrediction.sol
-
-The smart contract provides the following functionality:
+### Contract Interface
 
 ```solidity
-// Publish a prediction
-function publishPrediction(
-    string memory projectId,
-    uint256 score,           // Score scaled by 1e18 (0.7234 → 723400000000000000)
-    bytes32 proofHash,       // Cryptographic proof
-    string memory metadata   // JSON metadata
-) external returns (uint256 predictionId)
-
-// Get prediction data
-function getPrediction(string memory projectId) 
-    external view returns (
-        uint256 score,
-        bytes32 proofHash,
-        string memory metadata,
-        uint256 timestamp,
-        address publisher
-    )
+// FundraisePrediction.sol
+contract FundraisePrediction {
+    struct Prediction {
+        address submitter;
+        uint8 score;
+        uint256 timestamp;
+        bytes proof;
+    }
+    
+    mapping(bytes32 => Prediction) public predictions;
+    uint256 public totalPredictions;
+    
+    function submitPrediction(
+        bytes32 id,
+        uint8 score,
+        bytes calldata proof
+    ) external;
+    
+    function getPrediction(bytes32 id) 
+        external view returns (Prediction memory);
+    
+    function predictionExists(bytes32 id) 
+        external view returns (bool);
+}
 ```
 
 ### Contract Features
-- **Access Control**: Only authorized publishers can submit predictions
-- **Immutable Storage**: Predictions cannot be modified once published
-- **Event Emission**: `PredictionPublished` events for transparency
-- **Gas Optimization**: Efficient storage patterns and operations
 
-## HardHat Scripts
+- **Gas Optimized**: Efficient storage patterns
+- **Event Logging**: Comprehensive event emission
+- **Access Control**: Secure submission validation
+- **Data Integrity**: Immutable prediction storage
 
-### publish-prediction.js
-Publishes prediction data to the smart contract.
-
-**Environment Variables:**
-- `PROJECT_ID`: Project identifier
-- `PREDICTION_SCORE`: Score (0.0 to 1.0)
-- `PROOF_HASH`: Cryptographic proof (32 bytes hex)
-- `METADATA`: JSON metadata string
-- `CONTRACT_ADDRESS`: Smart contract address
-- `PRIVATE_KEY`: Publisher private key
-
-### get-transaction.js
-Queries transaction status and details.
-
-**Environment Variables:**
-- `TX_HASH`: Transaction hash to query
-- `PRIVATE_KEY`: Private key for blockchain access
-
-### check-network.js
-Verifies blockchain network connectivity and status.
-
-## Testing
-
-The service includes comprehensive unit tests covering:
-
-- **API Endpoints**: FastAPI endpoint testing with various scenarios
-- **Subprocess Mocking**: HardHat script integration testing
-- **Environment Validation**: Configuration and security testing
-- **Error Handling**: Edge cases and failure scenarios
-- **Property-based Testing**: Hypothesis-driven validation
+## 🔧 Development
 
 ### Running Tests
 
 ```bash
-# All tests with coverage
-pytest --cov=main --cov-report=html
+# Python tests
+pytest tests/ -v
 
-# Specific test categories
-pytest -m unit          # Unit tests only
-pytest -m api           # API tests only
-pytest -m subprocess    # Subprocess integration tests
+# HardHat tests
+npx hardhat test
 
-# Fast tests (skip slow ones)
-pytest -m "not slow"
+# Coverage reports
+pytest --cov=. tests/
 ```
 
-## Security Considerations
+### Contract Deployment
 
-### Private Key Management
-- Store private keys in environment variables only
-- Never commit private keys to version control
-- Use hardware wallets or key management services in production
-- Rotate keys regularly
+```bash
+# Deploy to Sepolia testnet
+npx hardhat run scripts/deploy.js --network sepolia
 
-### Smart Contract Security
-- Access control for authorized publishers
-- Input validation for all parameters
-- Gas limit protection against DoS attacks
-- Event emission for transparency
+# Verify contract on Etherscan
+npx hardhat verify --network sepolia CONTRACT_ADDRESS
+```
 
-### Network Security
-- Use HTTPS for all external communications
-- Validate all blockchain responses
-- Implement retry mechanisms with exponential backoff
-- Monitor for unusual transaction patterns
-
-## Gas Optimization
-
-### Default Settings
-- **Gas Limit**: 500,000 (configurable)
-- **Gas Price**: 20 gwei (configurable)
-- **Network**: Localhost for development
-
-### Cost Estimation
-- **Publish Prediction**: ~85,000 gas (~$3-10 depending on network)
-- **Query Prediction**: Free (view function)
-- **Authorization**: ~45,000 gas (one-time setup)
-
-## Integration with SuperPage
-
-The blockchain service integrates with other SuperPage components:
-
-1. **Prediction Service**: Receives prediction results for publishing
-2. **Frontend**: Provides transaction status and blockchain verification
-3. **Monitoring**: Structured logging for transaction tracking
-4. **CI/CD**: Automated testing and deployment pipelines
-
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-**Private Key Not Set:**
+**Private Key Issues**
 ```bash
-# Error: BLOCKCHAIN_PRIVATE_KEY environment variable is required
-export BLOCKCHAIN_PRIVATE_KEY=0x...your_key...
+# Ensure private key is without 0x prefix
+PRIVATE_KEY=abc123...  # ✓ Correct
+PRIVATE_KEY=0xabc123... # ✗ Incorrect
 ```
 
-**Contract Address Missing:**
+**Insufficient Funds**
 ```bash
-# Error: SUPERPAGE_CONTRACT_ADDRESS environment variable is required
-export SUPERPAGE_CONTRACT_ADDRESS=0x...contract_address...
+# Check Sepolia ETH balance
+curl -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["YOUR_ADDRESS","latest"],"id":1}' \
+  https://sepolia.infura.io/v3/YOUR_PROJECT_ID
 ```
 
-**Blockchain Connection Failed:**
-```bash
-# Check if local node is running
-npx hardhat node
-
-# Or check network URL
-export BLOCKCHAIN_NETWORK_URL=http://localhost:8545
-```
-
-**Transaction Failed:**
-```bash
-# Check gas settings
-export GAS_LIMIT=500000
-export GAS_PRICE=20000000000
-
-# Check account balance
-npx hardhat run scripts/check-balance.js
-```
-
-**HardHat Not Found:**
-```bash
-# Install HardHat dependencies
-npm install
-
-# Verify installation
-npx hardhat --version
-```
-
-## Development
-
-### Adding New Features
-1. Update smart contract if needed
-2. Create/modify HardHat scripts
-3. Update Python service endpoints
-4. Add comprehensive tests
-5. Update documentation
-
-### Testing Smart Contracts
-```bash
-# Compile contracts
-npx hardhat compile
-
-# Run contract tests
-npx hardhat test
-
-# Deploy to local network
-npx hardhat run scripts/deploy.js --network localhost
-```
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Add tests for new functionality
-4. Ensure all tests pass: `pytest`
-5. Test smart contract changes: `npx hardhat test`
-6. Submit a pull request
+2. Create feature branch (`git checkout -b feature/blockchain-enhancement`)
+3. Make changes and add tests
+4. Run test suite (`pytest tests/`)
+5. Commit changes (`git commit -m 'Add blockchain enhancement'`)
+6. Push to branch (`git push origin feature/blockchain-enhancement`)
+7. Open a Pull Request
 
-## License
+## 📄 License
 
-This project is part of the SuperPage ecosystem. See the main repository LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+
+---
+
+**Built with ❤️ for Web3** | [Main Documentation](../../README.md) | [Smart Contract on Etherscan](https://sepolia.etherscan.io/address/0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D)
