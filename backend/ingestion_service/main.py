@@ -744,6 +744,45 @@ def generate_sample_predictions(count: int = 50) -> List[Dict]:
     return predictions
 
 
+def generate_sample_companies(count: int = 50, start_index: int = 0) -> List[Dict]:
+    """Generate sample company data"""
+    import random
+    
+    company_names = [
+        "DeFiProtocol", "NFTMarketplace", "GameChanger", "ChainLink", "MetaVerse",
+        "CryptoWallet", "BlockchainBridge", "DAOGovernance", "SocialToken", "AIChain",
+        "DecentraNet", "TokenSwap", "SmartContract", "DigitalAssets", "Web3Social",
+        "DecentralizedFinance", "NonFungibleToken", "GameFi", "Infrastructure", "Metaverse",
+        "CryptoCurrency", "BlockchainSolutions", "DistributedLedger", "SmartContracts", "DigitalIdentity"
+    ]
+    
+    categories = ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social', 'DAO', 'Metaverse', 'AI']
+    locations = ['San Francisco', 'New York', 'London', 'Singapore', 'Berlin', 'Toronto', 'Sydney', 'Remote']
+    stages = ['Seed', 'Series A', 'Series B', 'Growth', 'MVP', 'Beta', 'Mainnet']
+    
+    companies = []
+    for i in range(count):
+        idx = start_index + i
+        company_name = f"{random.choice(company_names)} {idx + 1}"
+        
+        companies.append({
+            "id": f"company-{idx + 1}",
+            "projectId": f"startup-{idx + 1:03d}",
+            "title": company_name,
+            "description": f"Innovative {random.choice(categories)} project focused on decentralized solutions and blockchain technology",
+            "category": random.choice(categories),
+            "website": f"https://{company_name.lower().replace(' ', '')}.com",
+            "teamSize": random.randint(3, 25),
+            "stage": random.choice(stages),
+            "location": random.choice(locations),
+            "fundingAmount": f"${random.randint(100, 50000)}K",
+            "timestamp": (datetime.utcnow() - timedelta(days=random.randint(0, 365))).isoformat(),
+            "isReal": False
+        })
+    
+    return companies
+
+
 @app.get("/companies")
 async def get_companies(
     limit: int = 50,
@@ -810,43 +849,5 @@ async def get_companies(
             "has_real_data": False,
             "error": "Database error, showing sample data"
         }
-
-def generate_sample_companies(count: int = 50, start_index: int = 0) -> List[Dict]:
-    """Generate sample company data"""
-    import random
-    
-    company_names = [
-        "DeFiProtocol", "NFTMarketplace", "GameChanger", "ChainLink", "MetaVerse",
-        "CryptoWallet", "BlockchainBridge", "DAOGovernance", "SocialToken", "AIChain",
-        "DecentraNet", "TokenSwap", "SmartContract", "DigitalAssets", "Web3Social",
-        "DecentralizedFinance", "NonFungibleToken", "GameFi", "Infrastructure", "Metaverse",
-        "CryptoCurrency", "BlockchainSolutions", "DistributedLedger", "SmartContracts", "DigitalIdentity"
-    ]
-    
-    categories = ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social', 'DAO', 'Metaverse', 'AI']
-    locations = ['San Francisco', 'New York', 'London', 'Singapore', 'Berlin', 'Toronto', 'Sydney', 'Remote']
-    stages = ['Seed', 'Series A', 'Series B', 'Growth', 'MVP', 'Beta', 'Mainnet']
-    
-    companies = []
-    for i in range(count):
-        idx = start_index + i
-        company_name = f"{random.choice(company_names)} {idx + 1}"
-        
-        companies.append({
-            "id": f"company-{idx + 1}",
-            "projectId": f"startup-{idx + 1:03d}",
-            "title": company_name,
-            "description": f"Innovative {random.choice(categories)} project focused on decentralized solutions and blockchain technology",
-            "category": random.choice(categories),
-            "website": f"https://{company_name.lower().replace(' ', '')}.com",
-            "teamSize": random.randint(3, 25),
-            "stage": random.choice(stages),
-            "location": random.choice(locations),
-            "fundingAmount": f"${random.randint(100, 50000)}K",
-            "timestamp": (datetime.utcnow() - timedelta(days=random.randint(0, 365))).isoformat(),
-            "isReal": False
-        })
-    
-    return companies
 
 # ...existing code...
