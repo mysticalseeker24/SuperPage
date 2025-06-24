@@ -2,10 +2,12 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useMutation } from '@tanstack/react-query'
-import { Send, Loader2, AlertCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Send, Loader2, AlertCircle, Eye } from 'lucide-react'
 import { predictionService, convertPitchToFeatures } from '../services/api'
 
 const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -23,6 +25,10 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
   })
 
   const watchedValues = watch()
+
+  const handleViewInExplore = () => {
+    navigate('/explore')
+  }
 
   const predictionMutation = useMutation({
     mutationFn: async (formData) => {
@@ -315,6 +321,31 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
             </>
           )}
         </motion.button>
+
+        {/* Success message with quick navigation */}
+        {predictionMutation.isSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-green-700 dark:text-green-300 font-medium">
+                  Prediction generated successfully!
+                </span>
+              </div>
+              <button
+                onClick={handleViewInExplore}
+                className="inline-flex items-center space-x-1 text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
+              >
+                <Eye size={14} />
+                <span>View in Explore</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
       </form>
     </motion.div>
   )
