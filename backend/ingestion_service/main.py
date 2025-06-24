@@ -9,7 +9,7 @@ import logging
 import os
 import uuid
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
 import httpx
@@ -269,7 +269,7 @@ async def process_ingestion(job_id: str, url: str, schema: Dict[str, Any]):
         )
 
         # Store in database or print for development
-        if database and hasattr(database, 'name'):  # MongoDB database object
+        if database is not None and hasattr(database, 'name'):  # MongoDB database object
             collection = database["ingestion_jobs"]
             await collection.insert_one(extracted_data.dict())
             logger.info("Data stored in MongoDB", job_id=job_id)
@@ -290,7 +290,7 @@ async def process_ingestion(job_id: str, url: str, schema: Dict[str, Any]):
     except ValidationError as e:
         logger.error("Data validation failed", job_id=job_id, error=str(e))
         # Store error status
-        if database and hasattr(database, 'name'):  # MongoDB database object
+        if database is not None and hasattr(database, 'name'):  # MongoDB database object
             collection = database["ingestion_jobs"]
             await collection.insert_one({
                 "job_id": job_id,
@@ -303,7 +303,7 @@ async def process_ingestion(job_id: str, url: str, schema: Dict[str, Any]):
     except Exception as e:
         logger.error("Ingestion job failed", job_id=job_id, error=str(e))
         # Store error status
-        if database and hasattr(database, 'name'):  # MongoDB database object
+        if database is not None and hasattr(database, 'name'):  # MongoDB database object
             collection = database["ingestion_jobs"]
             await collection.insert_one({
                 "job_id": job_id,
@@ -386,7 +386,7 @@ async def process_web3_batch_ingestion(job_id: str, urls: List[str], schema: Dic
         "extracted_data": all_extracted_data
     }
 
-    if database and hasattr(database, 'name'):  # MongoDB database object
+    if database is not None and hasattr(database, 'name'):  # MongoDB database object
         collection = database["batch_ingestion_jobs"]
         await collection.insert_one(batch_summary)
         logger.info("Web3 batch ingestion completed and stored", job_id=job_id,
@@ -445,7 +445,7 @@ async def health_check():
         database_connected = False
         database_type = "none"
 
-        if database:
+        if database is not None:
             if isinstance(database, str) and database == "postgresql":
                 database_connected = True
                 database_type = "postgresql"
@@ -487,7 +487,7 @@ async def health_check():
 @app.get("/jobs/{job_id}")
 async def get_job_status(job_id: str):
     """Get status of a specific ingestion job"""
-    if not database or not hasattr(database, 'name'):
+    if database is None or not hasattr(database, 'name'):
         return {"error": "Database not available"}
 
     collection = database["ingestion_jobs"]
@@ -744,6 +744,109 @@ def generate_sample_predictions(count: int = 50) -> List[Dict]:
     return predictions
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8010)
+@app.get("/companies")
+async def get_companies(
+    limit: int = 50,
+    offset: int = 0,
+    min_score: float = 0.0,
+    category: Optional[str] = None
+):
+    """Get list of companies with their data from ingestion results"""
+    try:
+        # Check if we have real data in database
+        companies = []
+        
+        if database is not None and hasattr(database, 'name'):  # MongoDB
+            # Try to fetch from actual ingested data
+            collection = database["ingestion_jobs"]
+            query = {"status": "completed"}
+            
+            if category:
+                query["extracted_data.category"] = category
+            
+            cursor = collection.find(query).limit(limit).skip(offset)
+            async for doc in cursor:
+                if "extracted_data" in doc and doc["extracted_data"]:
+                    extracted = doc["extracted_data"]
+                    company = {
+                        "id": doc["job_id"],
+                        "projectId": extracted.get("project_name", f"project-{doc['job_id'][:8]}"),
+                        "title": extracted.get("project_name", "Unknown Project"),
+                        "description": extracted.get("description", "No description available"),
+                        "category": extracted.get("category", "Web3"),
+                        "website": extracted.get("website", doc.get("url", "")),
+                        "teamSize": extracted.get("team_size", 5),
+                        "stage": extracted.get("stage", "Unknown"),
+                        "location": extracted.get("location", "Unknown"),
+                        "fundingAmount": extracted.get("funding_amount", "0"),
+                        "timestamp": doc.get("timestamp", datetime.utcnow().isoformat()),
+                        "isReal": True
+                    }
+                    companies.append(company)
+        
+        # If we don't have enough real data, add sample data
+        if len(companies) < limit:
+            remaining = limit - len(companies)
+            sample_companies = generate_sample_companies(remaining, offset + len(companies))
+            companies.extend(sample_companies)
+        
+        return {
+            "companies": companies,
+            "total": len(companies),
+            "limit": limit,
+            "offset": offset,
+            "has_real_data": len([c for c in companies if c.get("isReal", False)]) > 0
+        }
+        
+    except Exception as e:
+        logger.error("Failed to fetch companies", error=str(e))
+        # Return sample data as fallback
+        sample_companies = generate_sample_companies(limit, offset)
+        return {
+            "companies": sample_companies,
+            "total": limit,
+            "limit": limit,
+            "offset": offset,
+            "has_real_data": False,
+            "error": "Database error, showing sample data"
+        }
+
+def generate_sample_companies(count: int = 50, start_index: int = 0) -> List[Dict]:
+    """Generate sample company data"""
+    import random
+    
+    company_names = [
+        "DeFiProtocol", "NFTMarketplace", "GameChanger", "ChainLink", "MetaVerse",
+        "CryptoWallet", "BlockchainBridge", "DAOGovernance", "SocialToken", "AIChain",
+        "DecentraNet", "TokenSwap", "SmartContract", "DigitalAssets", "Web3Social",
+        "DecentralizedFinance", "NonFungibleToken", "GameFi", "Infrastructure", "Metaverse",
+        "CryptoCurrency", "BlockchainSolutions", "DistributedLedger", "SmartContracts", "DigitalIdentity"
+    ]
+    
+    categories = ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social', 'DAO', 'Metaverse', 'AI']
+    locations = ['San Francisco', 'New York', 'London', 'Singapore', 'Berlin', 'Toronto', 'Sydney', 'Remote']
+    stages = ['Seed', 'Series A', 'Series B', 'Growth', 'MVP', 'Beta', 'Mainnet']
+    
+    companies = []
+    for i in range(count):
+        idx = start_index + i
+        company_name = f"{random.choice(company_names)} {idx + 1}"
+        
+        companies.append({
+            "id": f"company-{idx + 1}",
+            "projectId": f"startup-{idx + 1:03d}",
+            "title": company_name,
+            "description": f"Innovative {random.choice(categories)} project focused on decentralized solutions and blockchain technology",
+            "category": random.choice(categories),
+            "website": f"https://{company_name.lower().replace(' ', '')}.com",
+            "teamSize": random.randint(3, 25),
+            "stage": random.choice(stages),
+            "location": random.choice(locations),
+            "fundingAmount": f"${random.randint(100, 50000)}K",
+            "timestamp": (datetime.utcnow() - timedelta(days=random.randint(0, 365))).isoformat(),
+            "isReal": False
+        })
+    
+    return companies
+
+# ...existing code...

@@ -4,8 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 import {
   Search,
   Filter,
-  TrendingUp,
-  TrendingDown,
   Eye,
   Users,
   DollarSign,
@@ -16,31 +14,63 @@ import {
   Calendar
 } from 'lucide-react'
 
-// Get stored predictions from localStorage and combine with sample data
+// Fetch predictions from localStorage and backend
 const fetchTopPredictions = async () => {
   try {
     // Get stored predictions from localStorage
     const storedPredictions = JSON.parse(localStorage.getItem('superpage_predictions') || '[]')
 
-    // Create sample data to fill the list
-    const samplePredictions = Array.from({ length: Math.max(0, 20 - storedPredictions.length) }, (_, index) => ({
-      id: `sample-${index + 1}`,
-      projectId: `startup-${String(index + 1).padStart(3, '0')}`,
-      title: `Web3 Startup ${index + 1}`,
-      score: Math.random(),
-      timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      teamExperience: 2 + Math.random() * 13,
-      previousFunding: Math.random() * 10000000,
-      traction: Math.floor(Math.random() * 25000),
-      category: ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social'][Math.floor(Math.random() * 5)],
-      walletAddress: `0x${Math.random().toString(16).substr(2, 40)}`,
-      isUserPrediction: false,
-    }))
+    // Try to fetch real company data from backend
+    let backendData = []
+    try {
+      const response = await fetch('http://localhost:8010/companies?limit=30')
+      if (response.ok) {
+        const data = await response.json()
+        backendData = data.companies.map(company => ({
+          id: company.id,
+          projectId: company.projectId,
+          title: company.title,
+          score: Math.random() * 0.8 + 0.1, // Random score between 0.1-0.9
+          timestamp: company.timestamp,
+          teamExperience: company.teamSize || 5,
+          previousFunding: parseInt(company.fundingAmount?.replace(/[$K,]/g, '') || '0') * 1000,
+          traction: Math.floor(Math.random() * 25000),
+          category: company.category,
+          walletAddress: `0x${Math.random().toString(16).substr(2, 40)}`,
+          isUserPrediction: false,
+          description: company.description,
+          website: company.website,
+          stage: company.stage,
+          location: company.location,
+          isReal: company.isReal || false
+        }))
+      }
+    } catch (error) {
+      console.error('Failed to fetch backend data:', error)
+    }
 
-    // Combine stored predictions (at top) with sample data
+    // If no backend data, create sample data
+    if (backendData.length === 0) {
+      backendData = Array.from({ length: 20 }, (_, index) => ({
+        id: `sample-${index + 1}`,
+        projectId: `startup-${String(index + 1).padStart(3, '0')}`,
+        title: `Web3 Startup ${index + 1}`,
+        score: Math.random(),
+        timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        teamExperience: 2 + Math.random() * 13,
+        previousFunding: Math.random() * 10000000,
+        traction: Math.floor(Math.random() * 25000),
+        category: ['DeFi', 'NFT', 'Gaming', 'Infrastructure', 'Social'][Math.floor(Math.random() * 5)],
+        walletAddress: `0x${Math.random().toString(16).substr(2, 40)}`,
+        isUserPrediction: false,
+        isReal: false
+      }))
+    }
+
+    // Combine stored predictions (at top) with backend data
     const allPredictions = [
       ...storedPredictions.map(p => ({ ...p, isUserPrediction: true })),
-      ...samplePredictions
+      ...backendData
     ]
 
     return allPredictions

@@ -172,31 +172,42 @@ export const apiClients = {
    */
   async predict(data) {
     try {
-      // Try the prediction service directly first
-      const directResponse = await fetch('http://localhost:8002/predict', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-wallet-address': connectedAddress || '',
-        },
-        body: JSON.stringify({
+      // Use the proxy endpoint first for Docker deployment
+      try {
+        const response = await apiClient.post('/api/prediction/predict', {
           features: data,
-        }),
-      })
+          wallet_address: connectedAddress,
+        })
 
-      if (directResponse.ok) {
-        const result = await directResponse.json()
         return {
-          score: result.score,
-          explanations: result.explanations || {},
+          score: response.data.score,
+          explanations: response.data.explanations || {},
+        }
+      } catch (proxyError) {
+        console.log('Proxy endpoint failed, trying direct connection:', proxyError.message)
+        
+        // Fallback to direct connection
+        const directResponse = await fetch('http://localhost:8002/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-wallet-address': connectedAddress || '',
+          },
+          body: JSON.stringify({
+            features: data,
+          }),
+        })
+
+        if (directResponse.ok) {
+          const result = await directResponse.json()
+          return {
+            score: result.score,
+            explanations: result.explanations || {},
+          }
+        } else {
+          throw new Error(`Direct API failed: ${directResponse.status}`)
         }
       }
-
-      // Fallback to proxy endpoint
-      const response = await apiClient.post('/api/prediction/predict', {
-        features: data,
-        wallet_address: connectedAddress,
-      })
 
       return {
         score: response.data.score,
