@@ -76,9 +76,9 @@ if not PRIVATE_KEY:
     sys.exit(1)
 
 if not CONTRACT_ADDRESS:
-    logger.warning("CONTRACT_ADDRESS not found, will attempt to use default or deploy new contract")
-    # Use a default contract address for Railway deployment (can be updated later)
-    CONTRACT_ADDRESS = "0x0F0ee547b6d82308D55B00B9e978fB1D348ae16D"  # Default from deployment
+    logger.warning("CONTRACT_ADDRESS not found, will attempt to use latest deployment")
+    # Use the latest contract address from deployment
+    CONTRACT_ADDRESS = "0x1512a6f72465d63Dee9B522e5b46fA0a94b9159e"  # Latest deployment
 
 # Log configuration for debugging (without sensitive data)
 logger.info("Blockchain service configuration",
