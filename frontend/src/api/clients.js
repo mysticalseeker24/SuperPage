@@ -208,11 +208,6 @@ export const apiClients = {
           throw new Error(`Direct API failed: ${directResponse.status}`)
         }
       }
-
-      return {
-        score: response.data.score,
-        explanations: response.data.explanations || {},
-      }
     } catch (error) {
       console.error('Prediction error:', error)
 
