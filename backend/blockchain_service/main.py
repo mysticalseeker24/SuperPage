@@ -318,10 +318,21 @@ class BlockchainManager:
                     detail = f"Subprocess execution failed - this may be a Windows/shell compatibility issue: {error_msg}"
                 elif "command not found" in error_msg.lower() or "npx" in error_msg.lower():
                     detail = f"HardHat/NPX not found - ensure Node.js and HardHat are properly installed: {error_msg}"
-                elif "insufficient funds" in error_msg.lower():
+                elif "insufficient funds" in error_msg.lower() or "insufficient balance" in error_msg.lower():
                     detail = f"Insufficient funds for blockchain transaction - please add Sepolia ETH to your wallet: {error_msg}"
-                elif "network" in error_msg.lower():
+                elif "network" in error_msg.lower() or "connection" in error_msg.lower():
                     detail = f"Network connection issue - check blockchain network configuration: {error_msg}"
+                elif "gas" in error_msg.lower():
+                    detail = f"Gas estimation or execution error - transaction may require more gas: {error_msg}"
+                elif "nonce" in error_msg.lower():
+                    detail = f"Transaction nonce error - please wait for pending transactions to complete: {error_msg}"
+                elif "revert" in error_msg.lower() or "call_exception" in error_msg.lower():
+                    if "status\":0" in error_msg:
+                        detail = f"Smart contract transaction reverted - the contract may not have the expected function or the parameters may be invalid. Please check if the contract is properly deployed on Sepolia testnet."
+                    else:
+                        detail = f"Smart contract execution failed - the contract may not be deployed or the transaction may be invalid: {error_msg}"
+                elif "transaction failed" in error_msg.lower() and "ethers" in error_msg.lower():
+                    detail = f"Blockchain transaction failed to execute. This could be due to contract issues, insufficient gas, or network congestion. Please try again or contact support."
                 else:
                     detail = f"Blockchain transaction failed: {error_msg}. Output: {stdout_msg}"
 

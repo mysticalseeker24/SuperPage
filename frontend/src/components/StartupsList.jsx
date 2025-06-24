@@ -83,7 +83,7 @@ const fetchTopPredictions = async () => {
 const StartupsList = ({ onViewDetails }) => {
   const [scoreThreshold, setScoreThreshold] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
-  const [sortBy, setSortBy] = useState('score') // 'score', 'timestamp', 'funding'
+  const [sortBy, setSortBy] = useState('timestamp') // 'score', 'timestamp', 'funding' - default to recent
   const [sortOrder, setSortOrder] = useState('desc')
 
   // Fetch predictions data
@@ -108,8 +108,13 @@ const StartupsList = ({ onViewDetails }) => {
       return matchesScore && matchesSearch
     })
 
-    // Sort predictions
+    // Sort predictions - prioritize user predictions and recent timestamps
     filtered.sort((a, b) => {
+      // First priority: user predictions (always at top)
+      if (a.isUserPrediction && !b.isUserPrediction) return -1
+      if (!a.isUserPrediction && b.isUserPrediction) return 1
+      
+      // If both are user predictions or both are not, then sort by selected criteria
       let aValue, bValue
       
       switch (sortBy) {

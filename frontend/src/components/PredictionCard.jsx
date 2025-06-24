@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
   TrendingUp,
@@ -11,18 +12,25 @@ import {
   AlertCircle,
   BarChart3,
   Shield,
-  ExternalLink
+  ExternalLink,
+  Eye
 } from 'lucide-react'
 import { blockchainService, FEATURE_NAMES } from '../services/api'
 
-const PredictionCard = ({ data, onBack, walletAddress }) => {
+const PredictionCard = ({ data, onBack, walletAddress, isModal = false, hideBlockchain = false }) => {
   const [isPublishing, setIsPublishing] = useState(false)
   const [publishResult, setPublishResult] = useState(null)
+  const navigate = useNavigate()
 
   // Extract prediction data
   const { score, explanations, formData } = data
   const successProbability = Math.round(score * 100)
   const isPositive = successProbability >= 50
+
+  const handleViewInExplore = () => {
+    // Navigate to explore page
+    navigate('/explore')
+  }
 
   // Blockchain publish mutation
   const publishMutation = useMutation({
@@ -113,11 +121,23 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
           <span>Back to Form</span>
         </button>
         
-        <div className="text-right">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Prediction for</p>
-          <p className="font-mono text-sm text-gray-700 dark:text-gray-300">
-            {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-          </p>
+        <div className="flex items-center space-x-4">
+          {!isModal && (
+            <button
+              onClick={handleViewInExplore}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <Eye size={20} />
+              <span>View in Explore</span>
+            </button>
+          )}
+          
+          <div className="text-right">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Prediction for</p>
+            <p className="font-mono text-sm text-gray-700 dark:text-gray-300">
+              {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+            </p>
+          </div>
         </div>
       </motion.div>
 
@@ -363,19 +383,20 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
       </motion.div>
 
       {/* Blockchain Publishing */}
-      <motion.div variants={itemVariants} className="card p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Shield size={24} className="text-primary-500" />
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
-                Publish to Blockchain
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Store your prediction immutably on Sepolia testnet
-              </p>
+      {!hideBlockchain && (
+        <motion.div variants={itemVariants} className="card p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Shield size={24} className="text-primary-500" />
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Publish to Blockchain
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Store your prediction immutably on Sepolia testnet
+                </p>
+              </div>
             </div>
-          </div>
           
           {!publishResult ? (
             <motion.button
@@ -471,7 +492,8 @@ const PredictionCard = ({ data, onBack, walletAddress }) => {
             </p>
           </div>
         )}
-      </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   )
 }

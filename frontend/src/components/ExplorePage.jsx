@@ -153,16 +153,21 @@ const ExplorePage = () => {
     const formattedData = {
       score: prediction.score,
       explanations: {
-        'Team Experience': Math.random() * 0.3,
-        'Pitch Quality': Math.random() * 0.3,
-        'Tokenomics Score': Math.random() * 0.3,
+        'Team Experience': (prediction.teamExperience || 5) / 15, // Normalize to 0-1
+        'Pitch Quality': Math.random() * 0.4 + 0.1, // Random for now
+        'Tokenomics Score': Math.random() * 0.3 + 0.1,
+        'Traction': Math.min((prediction.traction || 1000) / 25000, 1), // Normalize to 0-1
+        'Community Engagement': Math.random() * 0.5,
+        'Previous Funding': Math.min((prediction.previousFunding || 0) / 10000000, 1), // Normalize to 0-1
+        'Raise Success Probability': prediction.score,
       },
       formData: {
         pitchTitle: prediction.title || prediction.projectId,
         teamExperience: prediction.teamExperience || 5,
         traction: prediction.traction || 1000,
         previousFunding: prediction.previousFunding || 0,
-        pitchDescription: `Detailed analysis for ${prediction.title || prediction.projectId}`,
+        pitchDescription: prediction.description || `Detailed analysis for ${prediction.title || prediction.projectId}. This project shows ${prediction.score > 0.7 ? 'high' : prediction.score > 0.4 ? 'moderate' : 'low'} potential for successful fundraising based on our AI analysis.`,
+        communityEngagement: Math.random() * 0.5,
       }
     }
     setSelectedPrediction(formattedData)
@@ -274,6 +279,7 @@ const ExplorePage = () => {
               onBack={handleCloseDetails}
               walletAddress="0x1234...5678"
               isModal={true}
+              hideBlockchain={true}
             />
           </motion.div>
         </motion.div>

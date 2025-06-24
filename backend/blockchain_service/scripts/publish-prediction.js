@@ -150,16 +150,36 @@ async function main() {
             networkGasPrice = ethers.utils.parseUnits(gasPrice, "wei");
         }
 
-        // Use higher of configured gas price or network gas price + 20% buffer
+        // Use higher of configured gas price or network gas price + 50% buffer for testnet
         const configuredGasPrice = ethers.utils.parseUnits(gasPrice, "wei");
-        const bufferedNetworkPrice = networkGasPrice.mul(120).div(100); // Add 20% buffer
+        const bufferedNetworkPrice = networkGasPrice.mul(150).div(100); // Add 50% buffer for testnet
         const finalGasPrice = configuredGasPrice.gt(bufferedNetworkPrice) ? configuredGasPrice : bufferedNetworkPrice;
 
         console.error(`Using gas price: ${finalGasPrice.toString()} wei (${ethers.utils.formatUnits(finalGasPrice, "gwei")} gwei)`);
 
+        // Estimate gas limit for the transaction
+        let estimatedGasLimit;
+        try {
+            estimatedGasLimit = await contract.estimateGas.publishPrediction(
+                projectId,
+                scoreWei,
+                proofBytes32,
+                metadata
+            );
+            // Add 20% buffer to estimated gas
+            estimatedGasLimit = estimatedGasLimit.mul(120).div(100);
+            console.error(`Estimated gas limit: ${estimatedGasLimit.toString()}`);
+        } catch (gasError) {
+            console.error(`Gas estimation failed: ${gasError.message}, using configured limit`);
+            estimatedGasLimit = ethers.BigNumber.from(gasLimit);
+        }
+
+        // Use the higher of configured or estimated gas limit
+        const finalGasLimit = estimatedGasLimit.gt(gasLimit) ? estimatedGasLimit : ethers.BigNumber.from(gasLimit);
+
         // Prepare transaction options
         const txOptions = {
-            gasLimit: gasLimit,
+            gasLimit: finalGasLimit,
             gasPrice: finalGasPrice,
             nonce: nonce
         };
