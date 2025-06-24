@@ -63,6 +63,11 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
         formData: watchedValues,
         walletAddress,
       })
+
+      // Auto-redirect to explore page after 2 seconds
+      setTimeout(() => {
+        navigate('/explore')
+      }, 2000)
     },
     onError: (error) => {
       console.error('Prediction failed:', error)
@@ -322,7 +327,7 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
           )}
         </motion.button>
 
-        {/* Success message with quick navigation */}
+        {/* Success message with auto-redirect notice */}
         {predictionMutation.isSuccess && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -333,7 +338,7 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span className="text-green-700 dark:text-green-300 font-medium">
-                  Prediction generated successfully!
+                  Prediction generated successfully! Redirecting to Explore page...
                 </span>
               </div>
               <button
@@ -341,7 +346,7 @@ const PitchForm = ({ onPredictionSuccess, walletAddress }) => {
                 className="inline-flex items-center space-x-1 text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
               >
                 <Eye size={14} />
-                <span>View in Explore</span>
+                <span>View Now</span>
               </button>
             </div>
           </motion.div>

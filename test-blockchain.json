@@ -1,0 +1,9 @@
+{
+  "project_id": "test-project-123",
+  "score": 0.75,
+  "proof": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "metadata": {
+    "test": true,
+    "timestamp": "2025-06-24T06:30:00Z"
+  }
+}
